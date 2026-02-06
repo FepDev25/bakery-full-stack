@@ -1,0 +1,180 @@
+# Diagram viewer
+
+```mermaid
+
+erDiagram
+    %% CORE ENTITIES
+    categories ||--o{ products : "categorizes"
+    products ||--o{ recipes : "has ingredients"
+    ingredients ||--o{ recipes : "used in"
+
+    %% SUPPLIERS & PURCHASES
+    suppliers ||--o{ ingredient_purchases : "supplies"
+    ingredients ||--o{ ingredient_purchases : "purchased"
+    users ||--o{ ingredient_purchases : "records"
+
+    %% CUSTOMERS & SALES
+    customers ||--o{ sales : "makes"
+    sales ||--o{ sale_items : "contains"
+    products ||--o{ sale_items : "sold as"
+    users ||--o{ sales : "processes"
+
+    %% PRODUCTION
+    products ||--o{ production_batches : "produced in"
+    users ||--o{ production_batches : "creates"
+
+    %% EXPENSES
+    users ||--o{ expenses : "records"
+
+    %% TABLES DEFINITIONS
+
+    categories {
+        uuid id PK
+        string name UK "Panadería, Pastelería, Galletas"
+        text description
+        boolean is_active
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    products {
+        uuid id PK
+        uuid category_id FK
+        string name UK "Baguette, Croissant"
+        text description
+        decimal price "Precio de venta"
+        string unit "unidad, kg, docena"
+        integer stock_quantity "Stock actual"
+        integer min_stock_alert "Alerta de stock mínimo"
+        boolean is_active
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    ingredients {
+        uuid id PK
+        string name UK "Harina 000, Levadura fresca"
+        string unit "kg, litros, unidades"
+        decimal stock_quantity "Stock actual"
+        decimal min_stock_alert
+        decimal unit_cost "Costo por unidad"
+        boolean is_active
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    recipes {
+        uuid id PK
+        uuid product_id FK
+        uuid ingredient_id FK
+        decimal quantity "Cantidad necesaria"
+        string unit "kg, gramos, ml"
+        timestamptz created_at
+    }
+
+    suppliers {
+        uuid id PK
+        string name UK
+        string contact_person
+        string phone
+        string email
+        text address
+        string tax_id "CUIT/RUC/RFC"
+        boolean is_active
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    ingredient_purchases {
+        uuid id PK
+        uuid supplier_id FK
+        uuid ingredient_id FK
+        uuid user_id FK "Quien registró la compra"
+        decimal quantity
+        string unit
+        decimal unit_price
+        decimal total_amount
+        date purchase_date
+        string invoice_number
+        text notes
+        timestamptz created_at
+    }
+
+    customers {
+        uuid id PK
+        string name
+        string phone
+        string email
+        text address
+        integer loyalty_points "Programa de fidelidad"
+        boolean is_active
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    sales {
+        uuid id PK
+        uuid customer_id FK "NULL si es venta anónima"
+        uuid user_id FK "Cajero que procesó"
+        string sale_number UK "Ej: VTA-2024-00123"
+        decimal subtotal
+        decimal discount_amount
+        decimal tax_amount
+        decimal total_amount
+        string payment_method "efectivo, tarjeta, transferencia"
+        string status "completada, cancelada"
+        timestamptz sale_date
+        text notes
+        timestamptz created_at
+    }
+
+    sale_items {
+        uuid id PK
+        uuid sale_id FK
+        uuid product_id FK
+        decimal quantity
+        string unit
+        decimal unit_price "Precio al momento de venta"
+        decimal subtotal
+        timestamptz created_at
+    }
+
+    production_batches {
+        uuid id PK
+        uuid product_id FK
+        uuid user_id FK "Panadero responsable"
+        decimal quantity_produced
+        string unit
+        date production_date
+        decimal ingredient_cost "Costo de ingredientes"
+        string status "en_proceso, completado, descartado"
+        text notes
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    expenses {
+        uuid id PK
+        uuid user_id FK
+        string category "alquiler, servicios, salarios, mantenimiento"
+        string description
+        decimal amount
+        date expense_date
+        string invoice_number
+        text notes
+        timestamptz created_at
+    }
+
+    users {
+        uuid id PK
+        string email UK
+        string password_hash
+        string full_name
+        string role "admin, cajero, panadero, contador"
+        boolean is_active
+        timestamptz last_login
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+```
