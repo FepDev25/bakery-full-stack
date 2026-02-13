@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: panaderia_db
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: panaderia_user
+      POSTGRES_PASSWORD: panaderia_pass
+      POSTGRES_DB: panaderia_db
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./panaderia_db/database/00_init.sql:/docker-entrypoint-initdb.d/00_init.sql:ro
+      - ./panaderia_db/database/01_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      # no se monta 02_triggers.sql ya que la lógica va en código
+      # - ./panaderia_db/database/seeds.sql:/docker-entrypoint-initdb.d/03_seeds.sql:ro 
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U panaderia_user -d panaderia_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local
