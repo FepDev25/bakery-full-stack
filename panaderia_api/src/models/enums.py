@@ -6,3 +6,10 @@ class ProductUnit(str, enum.Enum):
     GRAMO = "gramo"
     DOCENA = "docena"
     MEDIA_DOCENA = "media_docena"
+
+class IngredientUnit(str, enum.Enum):
+    KG = "kg"
+    GRAMO = "gramo"
+    LITRO = "litro"
+    MILILITRO = "mililitro"
+    UNIDAD = "unidad"
