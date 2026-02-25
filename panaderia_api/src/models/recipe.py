@@ -1,14 +1,20 @@
+from __future__ import annotations
+
 from datetime import datetime
 from decimal import Decimal
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from src.models.product import Product
+    from src.models.ingredient import Ingredient
+import uuid
 
 from sqlalchemy import DateTime, Enum as SAEnum, ForeignKey, Numeric, UniqueConstraint, func
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column
-import uuid
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.database import Base
 from src.models.enums import IngredientUnit
-
 
 class Recipe(Base):
     __tablename__ = "recipes"
@@ -31,3 +37,6 @@ class Recipe(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
+
+    product: Mapped["Product"] = relationship("Product", back_populates="recipes")
+    ingredient: Mapped["Ingredient"] = relationship("Ingredient", back_populates="recipes")

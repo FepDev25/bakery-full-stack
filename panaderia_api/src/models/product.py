@@ -1,18 +1,21 @@
-import uuid
-from sqlalchemy import String, Boolean, ForeignKey, Numeric, Text
-from sqlalchemy import Enum as SAEnum
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from src.core.database import Base
-from src.models.mixins import TimestampMixin
-from src.models.enums import ProductUnit
-from decimal import Decimal
-from sqlalchemy import UniqueConstraint
-
 from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from src.models.category import Category
+    from src.models.recipe import Recipe
+
+import uuid
+from decimal import Decimal
+
+from sqlalchemy import String, Boolean, ForeignKey, Numeric, Text
+from sqlalchemy import Enum as SAEnum
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import UniqueConstraint
+
+from src.core.database import Base
+from src.models.mixins import TimestampMixin
+from src.models.enums import ProductUnit
 
 class Product(Base, TimestampMixin):
     __tablename__ = "products"
@@ -37,3 +40,4 @@ class Product(Base, TimestampMixin):
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     category: Mapped["Category"] = relationship("Category", back_populates="products")
+    recipes: Mapped[list["Recipe"]] = relationship("Recipe", back_populates="product")
