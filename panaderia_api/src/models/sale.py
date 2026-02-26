@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from src.models.customer import Customer
     from src.models.user import User
+    from src.models.sale_item import SaleItem
 
 import uuid
 from decimal import Decimal
@@ -52,3 +53,4 @@ class Sale(Base):
     # relationships
     customer: Mapped["Customer"] = relationship("Customer", back_populates="sales")
     user: Mapped["User"] = relationship("User", back_populates="sales")
+    items: Mapped[list["SaleItem"]] = relationship("SaleItem", back_populates="sale")

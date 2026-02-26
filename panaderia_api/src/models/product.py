@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from src.models.category import Category
     from src.models.recipe import Recipe
+    from src.models.sale_item import SaleItem
 
 import uuid
 from decimal import Decimal
@@ -39,5 +40,7 @@ class Product(Base, TimestampMixin):
     min_stock_alert: Mapped[Decimal] = mapped_column(Numeric(10, 3), nullable=False, default=Decimal("0.000"))
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
+    # relationships
     category: Mapped["Category"] = relationship("Category", back_populates="products")
     recipes: Mapped[list["Recipe"]] = relationship("Recipe", back_populates="product")
+    sale_items: Mapped[list["SaleItem"]] = relationship("SaleItem", back_populates="product")
