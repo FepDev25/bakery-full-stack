@@ -30,3 +30,17 @@ class PaymentMethod(str, enum.Enum):
 class SaleStatus(str, enum.Enum):
     COMPLETADA = 'completada'
     CANCELADA = 'cancelada'
+
+class ProductionBatchStatus(str, enum.Enum):
+    EN_PROCESO = 'en_proceso'
+    COMPLETADO = 'completado'
+    DESCARTADO = 'descartado'
+
+class ExpenseCategory(str, enum.Enum):
+    ALQUILER = 'alquiler'
+    SERVICIOS = 'servicios'
+    SALARIOS = 'salarios'
+    MANTENIMIENTO = 'mantenimiento'
+    MARKETING = 'marketing'
+    IMPUESTOS = 'impuestos'
+    OTROS = 'otros'

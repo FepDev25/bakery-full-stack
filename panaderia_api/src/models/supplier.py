@@ -1,7 +1,14 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from src.models.ingredient_purchase import IngredientPurchase
+
 import uuid
+
 from sqlalchemy import String, Text, Boolean
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from src.core.database import Base
 from src.models.mixins import TimestampMixin
 
@@ -18,3 +25,6 @@ class Supplier(Base, TimestampMixin):
     address: Mapped[str | None] = mapped_column(Text, nullable=True)
     tax_id: Mapped[str | None] = mapped_column(String(50), nullable=True, unique=True)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+
+    # relationships
+    ingredient_purchases: Mapped[list["IngredientPurchase"]] = relationship("IngredientPurchase", back_populates="supplier")

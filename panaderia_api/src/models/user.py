@@ -2,6 +2,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from src.models.sale import Sale
+    from src.models.production_batch import ProductionBatch
+    from src.models.ingredient_purchase import IngredientPurchase
+    from src.models.expense import Expense
 
 import uuid
 from datetime import datetime
@@ -34,3 +37,6 @@ class User(Base, TimestampMixin):
 
     # relationships
     sales: Mapped[list["Sale"]] = relationship("Sale", back_populates="user")
+    production_batches: Mapped[list["ProductionBatch"]] = relationship("ProductionBatch", back_populates="user")
+    ingredient_purchases: Mapped[list["IngredientPurchase"]] = relationship("IngredientPurchase", back_populates="user")
+    expenses: Mapped[list["Expense"]] = relationship("Expense", back_populates="user")

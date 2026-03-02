@@ -4,6 +4,7 @@ if TYPE_CHECKING:
     from src.models.category import Category
     from src.models.recipe import Recipe
     from src.models.sale_item import SaleItem
+    from src.models.production_batch import ProductionBatch
 
 import uuid
 from decimal import Decimal
@@ -44,3 +45,4 @@ class Product(Base, TimestampMixin):
     category: Mapped["Category"] = relationship("Category", back_populates="products")
     recipes: Mapped[list["Recipe"]] = relationship("Recipe", back_populates="product")
     sale_items: Mapped[list["SaleItem"]] = relationship("SaleItem", back_populates="product")
+    production_batches: Mapped[list["ProductionBatch"]] = relationship("ProductionBatch", back_populates="product")

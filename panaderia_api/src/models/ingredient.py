@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from src.models.recipe import Recipe
+    from src.models.ingredient_purchase import IngredientPurchase
     
 from src.models.mixins import TimestampMixin
 from src.core.database import Base
@@ -31,4 +32,6 @@ class Ingredient(Base, TimestampMixin):
     unit_cost: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False, default=Decimal("0.00"))
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
+    # relationships
     recipes: Mapped[list["Recipe"]] = relationship("Recipe", back_populates="ingredient")
+    ingredient_purchases: Mapped[list["IngredientPurchase"]] = relationship("IngredientPurchase", back_populates="ingredient")
