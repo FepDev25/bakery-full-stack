@@ -3,7 +3,8 @@ info:
   title: panaderia_api
   description: 'API de gestión para panadería: ventas, producción, inventario y gastos.'
   contact:
-    name: Equipo de desarrollo
+    name: FepDev
+    email: lamediatricolor@gmail.com
   version: 0.1.0
 paths:
   /api/v1/auth/login:
@@ -63,7 +64,7 @@ paths:
       summary: List Categories
       operationId: list_categories_api_v1_categories_get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: page
         in: query
@@ -105,7 +106,7 @@ paths:
       summary: Create Category
       operationId: create_category_api_v1_categories_post
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       requestBody:
         required: true
         content:
@@ -132,7 +133,7 @@ paths:
       summary: Get Category
       operationId: get_category_api_v1_categories__category_id__get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: category_id
         in: path
@@ -160,7 +161,7 @@ paths:
       summary: Update Category
       operationId: update_category_api_v1_categories__category_id__patch
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: category_id
         in: path
@@ -194,7 +195,7 @@ paths:
       summary: Delete Category
       operationId: delete_category_api_v1_categories__category_id__delete
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: category_id
         in: path
@@ -219,7 +220,7 @@ paths:
       summary: List Suppliers
       operationId: list_suppliers_api_v1_suppliers_get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: page
         in: query
@@ -261,7 +262,7 @@ paths:
       summary: Create Supplier
       operationId: create_supplier_api_v1_suppliers_post
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       requestBody:
         required: true
         content:
@@ -288,7 +289,7 @@ paths:
       summary: Get Supplier
       operationId: get_supplier_api_v1_suppliers__supplier_id__get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: supplier_id
         in: path
@@ -316,7 +317,7 @@ paths:
       summary: Update Supplier
       operationId: update_supplier_api_v1_suppliers__supplier_id__patch
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: supplier_id
         in: path
@@ -350,7 +351,7 @@ paths:
       summary: Delete Supplier
       operationId: delete_supplier_api_v1_suppliers__supplier_id__delete
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: supplier_id
         in: path
@@ -375,7 +376,7 @@ paths:
       summary: List Ingredients
       operationId: list_ingredients_api_v1_ingredients_get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: page
         in: query
@@ -417,7 +418,7 @@ paths:
       summary: Create Ingredient
       operationId: create_ingredient_api_v1_ingredients_post
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       requestBody:
         required: true
         content:
@@ -444,7 +445,7 @@ paths:
       summary: Get Ingredient
       operationId: get_ingredient_api_v1_ingredients__ingredient_id__get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: ingredient_id
         in: path
@@ -472,7 +473,7 @@ paths:
       summary: Update Ingredient
       operationId: update_ingredient_api_v1_ingredients__ingredient_id__patch
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: ingredient_id
         in: path
@@ -506,7 +507,7 @@ paths:
       summary: Delete Ingredient
       operationId: delete_ingredient_api_v1_ingredients__ingredient_id__delete
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: ingredient_id
         in: path
@@ -531,7 +532,7 @@ paths:
       summary: List Products
       operationId: list_products_api_v1_products_get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: is_active
         in: query
@@ -594,7 +595,7 @@ paths:
       summary: Create Product
       operationId: create_product_api_v1_products_post
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       requestBody:
         required: true
         content:
@@ -621,7 +622,7 @@ paths:
       summary: Get Product
       operationId: get_product_api_v1_products__product_id__get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: product_id
         in: path
@@ -649,7 +650,7 @@ paths:
       summary: Update Product
       operationId: update_product_api_v1_products__product_id__patch
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: product_id
         in: path
@@ -683,7 +684,7 @@ paths:
       summary: Delete Product
       operationId: delete_product_api_v1_products__product_id__delete
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: product_id
         in: path
@@ -708,7 +709,7 @@ paths:
       summary: List Customers
       operationId: list_customers_api_v1_customers_get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: page
         in: query
@@ -750,7 +751,7 @@ paths:
       summary: Create Customer
       operationId: create_customer_api_v1_customers_post
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       requestBody:
         required: true
         content:
@@ -777,7 +778,7 @@ paths:
       summary: Get Customer
       operationId: get_customer_api_v1_customers__customer_id__get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: customer_id
         in: path
@@ -805,7 +806,7 @@ paths:
       summary: Update Customer
       operationId: update_customer_api_v1_customers__customer_id__patch
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: customer_id
         in: path
@@ -839,7 +840,7 @@ paths:
       summary: Delete Customer
       operationId: delete_customer_api_v1_customers__customer_id__delete
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: customer_id
         in: path
@@ -864,7 +865,7 @@ paths:
       summary: Redeem Points
       operationId: redeem_points_api_v1_customers__customer_id__redeem_points_post
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: customer_id
         in: path
@@ -899,7 +900,7 @@ paths:
       summary: List Users
       operationId: list_users_api_v1_users_get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: skip
         in: query
@@ -937,7 +938,7 @@ paths:
       summary: Create User
       operationId: create_user_api_v1_users_post
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       requestBody:
         required: true
         content:
@@ -964,7 +965,7 @@ paths:
       summary: Get User
       operationId: get_user_api_v1_users__user_id__get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: user_id
         in: path
@@ -992,7 +993,7 @@ paths:
       summary: Update User
       operationId: update_user_api_v1_users__user_id__patch
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: user_id
         in: path
@@ -1026,7 +1027,7 @@ paths:
       summary: Delete User
       operationId: delete_user_api_v1_users__user_id__delete
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: user_id
         in: path
@@ -1051,7 +1052,7 @@ paths:
       summary: Change Password
       operationId: change_password_api_v1_users__user_id__password_patch
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: user_id
         in: path
@@ -1082,7 +1083,7 @@ paths:
       summary: List Sales
       operationId: list_sales_api_v1_sales_get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: from_date
         in: query
@@ -1146,7 +1147,7 @@ paths:
       summary: Create Sale
       operationId: create_sale_api_v1_sales_post
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       requestBody:
         required: true
         content:
@@ -1173,7 +1174,7 @@ paths:
       summary: Get Sale
       operationId: get_sale_api_v1_sales__sale_id__get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: sale_id
         in: path
@@ -1202,7 +1203,7 @@ paths:
       summary: Cancel Sale
       operationId: cancel_sale_api_v1_sales__sale_id__cancel_post
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: sale_id
         in: path
@@ -1237,7 +1238,7 @@ paths:
       summary: List Batches
       operationId: list_batches_api_v1_production_batches_get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: page
         in: query
@@ -1279,7 +1280,7 @@ paths:
       summary: Create Batch
       operationId: create_batch_api_v1_production_batches_post
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       requestBody:
         required: true
         content:
@@ -1306,7 +1307,7 @@ paths:
       summary: Get Batch
       operationId: get_batch_api_v1_production_batches__batch_id__get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: batch_id
         in: path
@@ -1335,7 +1336,7 @@ paths:
       summary: Complete Batch
       operationId: complete_batch_api_v1_production_batches__batch_id__complete_post
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: batch_id
         in: path
@@ -1364,7 +1365,7 @@ paths:
       summary: Discard Batch
       operationId: discard_batch_api_v1_production_batches__batch_id__discard_post
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: batch_id
         in: path
@@ -1393,7 +1394,7 @@ paths:
       summary: List Purchases
       operationId: list_purchases_api_v1_ingredient_purchases_get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: page
         in: query
@@ -1435,7 +1436,7 @@ paths:
       summary: Register Purchase
       operationId: register_purchase_api_v1_ingredient_purchases_post
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       requestBody:
         required: true
         content:
@@ -1462,7 +1463,7 @@ paths:
       summary: List By Supplier
       operationId: list_by_supplier_api_v1_ingredient_purchases_by_supplier__supplier_id__get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: supplier_id
         in: path
@@ -1508,7 +1509,7 @@ paths:
       summary: List By Ingredient
       operationId: list_by_ingredient_api_v1_ingredient_purchases_by_ingredient__ingredient_id__get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: ingredient_id
         in: path
@@ -1554,7 +1555,7 @@ paths:
       summary: List Recipes By Product
       operationId: list_recipes_by_product_api_v1_recipes_product__product_id__get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: product_id
         in: path
@@ -1586,7 +1587,7 @@ paths:
       summary: Get Production Cost
       operationId: get_production_cost_api_v1_recipes_product__product_id__cost_get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: product_id
         in: path
@@ -1615,7 +1616,7 @@ paths:
       summary: Get Recipe
       operationId: get_recipe_api_v1_recipes__recipe_id__get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: recipe_id
         in: path
@@ -1643,7 +1644,7 @@ paths:
       summary: Update Recipe
       operationId: update_recipe_api_v1_recipes__recipe_id__patch
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: recipe_id
         in: path
@@ -1677,7 +1678,7 @@ paths:
       summary: Delete Recipe
       operationId: delete_recipe_api_v1_recipes__recipe_id__delete
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: recipe_id
         in: path
@@ -1721,7 +1722,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
   /api/v1/expenses:
     get:
       tags:
@@ -1729,7 +1730,7 @@ paths:
       summary: List Expenses
       operationId: list_expenses_api_v1_expenses_get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: skip
         in: query
@@ -1767,7 +1768,7 @@ paths:
       summary: Create Expense
       operationId: create_expense_api_v1_expenses_post
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       requestBody:
         required: true
         content:
@@ -1794,7 +1795,7 @@ paths:
       summary: Get Expense
       operationId: get_expense_api_v1_expenses__expense_id__get
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: expense_id
         in: path
@@ -1822,7 +1823,7 @@ paths:
       summary: Update Expense
       operationId: update_expense_api_v1_expenses__expense_id__patch
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: expense_id
         in: path
@@ -1856,7 +1857,7 @@ paths:
       summary: Delete Expense
       operationId: delete_expense_api_v1_expenses__expense_id__delete
       security:
-      - OAuth2PasswordBearer: []
+      - HTTPBearer: []
       parameters:
       - name: expense_id
         in: path
@@ -3616,9 +3617,6 @@ components:
       - type
       title: ValidationError
   securitySchemes:
-    OAuth2PasswordBearer:
-      type: oauth2
-      flows:
-        password:
-          scopes: {}
-          tokenUrl: /api/v1/auth/login
+    HTTPBearer:
+      type: http
+      scheme: bearer
