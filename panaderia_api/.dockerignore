@@ -1,0 +1,33 @@
+# Entorno virtual local
+.venv/
+
+# Archivos de entorno con credenciales reales
+.env
+.env.*
+!.env.example
+
+# Artefactos de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Pytest y cobertura
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# IDEs y editores
+.vscode/
+.idea/
+*.swp
+
+# Mypy y linters
+.mypy_cache/
+.ruff_cache/
+
+# Git
+.git/
+.gitignore
