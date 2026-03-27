@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator
@@ -60,3 +61,12 @@ class CustomerResponse(CustomerBase):
     is_active: bool
     created_at: datetime
     updated_at: datetime
+
+# request para canjear puntos
+class RedeemPointsRequest(BaseModel):
+    points: int = Field(gt=0, description="Cantidad de puntos a canjear")
+
+# Respuesta para canjear puntos
+class RedeemPointsResponse(BaseModel):
+    discount_amount: Decimal
+    remaining_points: int
