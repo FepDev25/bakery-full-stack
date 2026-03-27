@@ -4,10 +4,9 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import Depends
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.config import settings
 from src.core.database import get_async_db
 from src.core.exceptions import ForbiddenError, UnauthorizedError
 from src.core.security import decode_token
@@ -16,14 +15,14 @@ from src.models.user import User
 from src.repositories.user import UserRepository
 
 # dependencia para obtener el usuario actual a partir del token JWT en la cabecera Authorization
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth/login")
+_bearer_scheme = HTTPBearer()
 
 # función para obtener el usuario actual a partir del token JWT, con verificación de validez y estado
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)],
+async def get_current_user(credentials: Annotated[HTTPAuthorizationCredentials, Depends(_bearer_scheme)],
     db: Annotated[AsyncSession, Depends(get_async_db)]) -> User:
 
     # decodificar el token y verificar su tipo y expiración
-    payload = decode_token(token, expected_type="access")
+    payload = decode_token(credentials.credentials, expected_type="access")
 
     user_id: str | None = payload.get("sub")
     if not user_id:
