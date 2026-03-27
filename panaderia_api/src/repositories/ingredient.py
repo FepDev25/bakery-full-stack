@@ -1,3 +1,6 @@
+from decimal import Decimal
+from uuid import UUID
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,6 +19,23 @@ class IngredientRepository(BaseRepository[Ingredient]):
             query = query.where(Ingredient.is_active == True)
         result = await self.session.execute(query.offset(skip).limit(limit))
         return list(result.scalars().all())
+
+    # metodo para obtener un ingrediente por su ID con bloqueo
+    async def get_by_id_with_lock(self, id: UUID) -> Ingredient | None:
+        result = await self.session.execute(
+            select(Ingredient).where(Ingredient.id == id).with_for_update()
+        )
+        return result.scalar_one_or_none()
+
+    # metodo para actualizar stock y costo unitario de un ingrediente
+    async def update_stock_and_cost(
+        self, ingredient: Ingredient, stock_quantity: Decimal, unit_cost: Decimal
+    ) -> Ingredient:
+        ingredient.stock_quantity = stock_quantity
+        ingredient.unit_cost = unit_cost
+        await self.session.flush()
+        await self.session.refresh(ingredient)
+        return ingredient
 
     async def get_by_name(self, name: str) -> Ingredient | None:
         result = await self.session.execute(
