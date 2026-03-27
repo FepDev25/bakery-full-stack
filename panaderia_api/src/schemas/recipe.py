@@ -29,3 +29,9 @@ class RecipeResponse(RecipeBase):
     product_id: UUID
     ingredient_id: UUID
     created_at: datetime
+
+# respuesta para el costo de producción de un producto
+class ProductionCostResponse(BaseModel):
+    product_id: UUID
+    cost_per_unit: Decimal
+    recipe_count: int
