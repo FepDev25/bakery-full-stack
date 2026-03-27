@@ -28,7 +28,7 @@ class User(Base, TimestampMixin):
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     full_name: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[Role] = mapped_column(
-        SAEnum(Role, name="user_role"),
+        SAEnum(Role, name="user_role", values_callable=lambda objs: [e.value for e in objs], create_type=False),
         nullable=False,
         default=Role.CAJERO
     )
