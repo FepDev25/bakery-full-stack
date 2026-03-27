@@ -5,6 +5,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.models.enums import PaymentMethod, SaleStatus
+from src.schemas.sale_item import SaleItemCreate, SaleItemResponse
 
 
 class SaleBase(BaseModel):
@@ -16,10 +17,10 @@ class SaleBase(BaseModel):
 class SaleCreate(SaleBase):
     # subtotal, tax_amount, total_amount los calcula el servicio a partir de los items
     discount_amount: Decimal = Field(default=Decimal("0.00"), ge=0, decimal_places=2)
+    items: list[SaleItemCreate] = Field(min_length=1)
 
 
 class SaleCancel(BaseModel):
-    # Cambiar status es una operación de negocio dedicada, no un PATCH genérico
     notes: str | None = None
 
 
@@ -36,3 +37,7 @@ class SaleResponse(SaleBase):
     status: SaleStatus
     sale_date: datetime
     created_at: datetime
+
+# respuesta para una venta con sus items incluidos
+class SaleWithItemsResponse(SaleResponse):
+    items: list[SaleItemResponse] = []
