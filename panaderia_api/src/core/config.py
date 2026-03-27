@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:5173"
 
     # jwt
-    SECRET_KEY: str = "CHANGE_IN_PRODUCTION_use_openssl_rand_hex_32"
+    SECRET_KEY: str
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
