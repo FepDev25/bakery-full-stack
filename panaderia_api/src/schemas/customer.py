@@ -4,6 +4,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator
 
+from src.schemas._base import DecimalJSON
+
 class CustomerBase(BaseModel):
     name: str = Field(min_length=1, max_length=255)
     phone: str | None = Field(default=None, max_length=50)
@@ -68,5 +70,5 @@ class RedeemPointsRequest(BaseModel):
 
 # Respuesta para canjear puntos
 class RedeemPointsResponse(BaseModel):
-    discount_amount: Decimal
+    discount_amount: DecimalJSON
     remaining_points: int

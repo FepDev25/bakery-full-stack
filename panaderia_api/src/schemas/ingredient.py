@@ -5,6 +5,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.models.enums import IngredientUnit
+from src.schemas._base import DecimalJSON
 
 class IngredientBase(BaseModel):
     name: str = Field(min_length=1, max_length=255)
@@ -24,8 +25,9 @@ class IngredientResponse(IngredientBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: UUID
-    stock_quantity: Decimal
-    unit_cost: Decimal
+    min_stock_alert: DecimalJSON
+    stock_quantity: DecimalJSON
+    unit_cost: DecimalJSON
     is_active: bool
     created_at: datetime
     updated_at: datetime

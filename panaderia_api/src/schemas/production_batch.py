@@ -5,6 +5,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.models.enums import ProductionBatchStatus
+from src.schemas._base import DecimalJSON
 
 
 class ProductionBatchBase(BaseModel):
@@ -32,7 +33,8 @@ class ProductionBatchResponse(ProductionBatchBase):
 
     id: UUID
     user_id: UUID
-    ingredient_cost: Decimal
+    quantity_produced: DecimalJSON
+    ingredient_cost: DecimalJSON
     status: ProductionBatchStatus
     created_at: datetime
     updated_at: datetime

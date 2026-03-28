@@ -5,6 +5,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.models.enums import ExpenseCategory
+from src.schemas._base import DecimalJSON
 
 
 class ExpenseBase(BaseModel):
@@ -34,4 +35,5 @@ class ExpenseResponse(ExpenseBase):
 
     id: UUID
     user_id: UUID
+    amount: DecimalJSON
     created_at: datetime

@@ -5,6 +5,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.models.enums import PaymentMethod, SaleStatus
+from src.schemas._base import DecimalJSON
 from src.schemas.sale_item import SaleItemCreate, SaleItemResponse
 
 
@@ -30,10 +31,10 @@ class SaleResponse(SaleBase):
     id: UUID
     user_id: UUID
     sale_number: str
-    subtotal: Decimal
-    discount_amount: Decimal
-    tax_amount: Decimal
-    total_amount: Decimal
+    subtotal: DecimalJSON
+    discount_amount: DecimalJSON
+    tax_amount: DecimalJSON
+    total_amount: DecimalJSON
     status: SaleStatus
     sale_date: datetime
     created_at: datetime

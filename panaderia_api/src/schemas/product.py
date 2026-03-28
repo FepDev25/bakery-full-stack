@@ -5,6 +5,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.models.enums import ProductUnit
+from src.schemas._base import DecimalJSON
 
 class ProductBase(BaseModel):
     name: str = Field(min_length=1, max_length=255)
@@ -30,7 +31,9 @@ class ProductResponse(ProductBase):
 
     id: UUID
     category_id: UUID
-    stock_quantity: Decimal
+    price: DecimalJSON
+    min_stock_alert: DecimalJSON
+    stock_quantity: DecimalJSON
     is_active: bool
     created_at: datetime
     updated_at: datetime

@@ -4,6 +4,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from src.schemas._base import DecimalJSON
+
 
 class SaleItemCreate(BaseModel):
     # No hay Base ni Update: sale_items son inmutables
@@ -19,8 +21,8 @@ class SaleItemResponse(BaseModel):
     id: UUID
     sale_id: UUID
     product_id: UUID
-    quantity: Decimal
+    quantity: DecimalJSON
     unit: str
-    unit_price: Decimal
-    subtotal: Decimal
+    unit_price: DecimalJSON
+    subtotal: DecimalJSON
     created_at: datetime

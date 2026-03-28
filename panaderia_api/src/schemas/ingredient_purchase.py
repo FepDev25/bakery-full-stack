@@ -5,6 +5,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.models.enums import IngredientUnit
+from src.schemas._base import DecimalJSON
 
 
 class IngredientPurchaseBase(BaseModel):
@@ -28,5 +29,7 @@ class IngredientPurchaseResponse(IngredientPurchaseBase):
 
     id: UUID
     user_id: UUID
-    total_amount: Decimal
+    quantity: DecimalJSON
+    unit_price: DecimalJSON
+    total_amount: DecimalJSON
     created_at: datetime
