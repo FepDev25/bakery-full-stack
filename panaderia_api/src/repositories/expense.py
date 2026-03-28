@@ -1,6 +1,7 @@
+from datetime import date
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.expense import Expense
@@ -11,6 +12,35 @@ from src.schemas.expense import ExpenseCreate, ExpenseUpdate
 class ExpenseRepository(BaseRepository[Expense]):
     def __init__(self, session: AsyncSession) -> None:
         super().__init__(Expense, session)
+
+    async def get_all_filtered(
+        self,
+        skip: int = 0,
+        limit: int = 20,
+        from_date: date | None = None,
+        to_date: date | None = None,
+    ) -> list[Expense]:
+        query = select(Expense)
+        if from_date:
+            query = query.where(Expense.expense_date >= from_date)
+        if to_date:
+            query = query.where(Expense.expense_date <= to_date)
+        query = query.order_by(Expense.expense_date.desc()).offset(skip).limit(limit)
+        result = await self.session.execute(query)
+        return list(result.scalars().all())
+
+    async def count_filtered(
+        self,
+        from_date: date | None = None,
+        to_date: date | None = None,
+    ) -> int:
+        query = select(func.count()).select_from(Expense)
+        if from_date:
+            query = query.where(Expense.expense_date >= from_date)
+        if to_date:
+            query = query.where(Expense.expense_date <= to_date)
+        result = await self.session.execute(query)
+        return result.scalar_one()
 
     async def get_by_user(self, user_id: UUID, skip: int = 0, limit: int = 100) -> list[Expense]:
         result = await self.session.execute(
