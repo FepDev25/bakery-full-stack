@@ -1,7 +1,8 @@
+from datetime import date
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.database import get_async_db
@@ -12,6 +13,7 @@ from src.repositories.expense import ExpenseRepository
 from src.repositories.user import UserRepository
 from src.schemas.expense import ExpenseCreate, ExpenseResponse, ExpenseUpdate
 from src.services.expense import ExpenseService
+from src.utils.pagination import PaginatedResponse, PaginationParams
 
 # controlador de gastos, gestionados por admin y contador
 router = APIRouter()
@@ -27,14 +29,20 @@ ReadAccess = Annotated[User, Depends(require_role(Role.ADMIN, Role.CONTADOR))]
 WriteAccess = Annotated[User, Depends(require_role(Role.ADMIN, Role.CONTADOR))]
 
 
-@router.get("", response_model=list[ExpenseResponse])
+@router.get("", response_model=PaginatedResponse[ExpenseResponse])
 async def list_expenses(
     service: ServiceDep,
     _: ReadAccess,
-    skip: int = 0,
-    limit: int = 100,
-) -> list[ExpenseResponse]:
-    return await service.get_all(skip=skip, limit=limit)
+    pagination: Annotated[PaginationParams, Depends()],
+    from_date: date | None = Query(default=None, description="Fecha inicio (YYYY-MM-DD)"),
+    to_date: date | None = Query(default=None, description="Fecha fin (YYYY-MM-DD)"),
+) -> PaginatedResponse[ExpenseResponse]:
+    items = await service.get_all(
+        skip=pagination.skip, limit=pagination.limit,
+        from_date=from_date, to_date=to_date,
+    )
+    total = await service.count_all(from_date=from_date, to_date=to_date)
+    return PaginatedResponse.build(items, total, pagination)
 
 
 @router.get("/{expense_id}", response_model=ExpenseResponse)
