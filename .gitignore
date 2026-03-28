@@ -11,3 +11,17 @@ wheels/
 .env
 venv/
 .vscode/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+panaderia_web/node_modules
+panaderia_web/dist
+dist-ssr
+*.local
