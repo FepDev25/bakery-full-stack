@@ -57,6 +57,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/auth/me:
+    get:
+      tags:
+      - Auth
+      summary: Get Me
+      operationId: get_me_api_v1_auth_me_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+      security:
+      - HTTPBearer: []
   /api/v1/categories:
     get:
       tags:
@@ -1732,30 +1747,56 @@ paths:
       security:
       - HTTPBearer: []
       parameters:
-      - name: skip
+      - name: from_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: Fecha inicio (YYYY-MM-DD)
+          title: From Date
+        description: Fecha inicio (YYYY-MM-DD)
+      - name: to_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          description: Fecha fin (YYYY-MM-DD)
+          title: To Date
+        description: Fecha fin (YYYY-MM-DD)
+      - name: page
         in: query
         required: false
         schema:
           type: integer
-          default: 0
-          title: Skip
-      - name: limit
+          minimum: 1
+          description: Número de página (1-indexed)
+          default: 1
+          title: Page
+        description: Número de página (1-indexed)
+      - name: page_size
         in: query
         required: false
         schema:
           type: integer
-          default: 100
-          title: Limit
+          maximum: 100
+          minimum: 1
+          description: Tamaño de página
+          default: 20
+          title: Page Size
+        description: Tamaño de página
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ExpenseResponse'
-                title: Response List Expenses Api V1 Expenses Get
+                $ref: '#/components/schemas/PaginatedResponse_ExpenseResponse_'
         '422':
           description: Validation Error
           content:
@@ -2129,8 +2170,7 @@ components:
           minLength: 1
           title: Description
         amount:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,2}0*$
+          type: number
           title: Amount
         expense_date:
           type: string
@@ -2301,14 +2341,12 @@ components:
           format: uuid
           title: Ingredient Id
         quantity:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,3}0*$
+          type: number
           title: Quantity
         unit:
           $ref: '#/components/schemas/IngredientUnit'
         unit_price:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,2}0*$
+          type: number
           title: Unit Price
         purchase_date:
           type: string
@@ -2334,8 +2372,7 @@ components:
           format: uuid
           title: User Id
         total_amount:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          type: number
           title: Total Amount
         created_at:
           type: string
@@ -2365,21 +2402,17 @@ components:
           $ref: '#/components/schemas/IngredientUnit'
           default: kg
         min_stock_alert:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,3}0*$
+          type: number
           title: Min Stock Alert
-          default: '0.000'
         id:
           type: string
           format: uuid
           title: Id
         stock_quantity:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          type: number
           title: Stock Quantity
         unit_cost:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          type: number
           title: Unit Cost
         is_active:
           type: boolean
@@ -2395,6 +2428,7 @@ components:
       type: object
       required:
       - name
+      - min_stock_alert
       - id
       - stock_quantity
       - unit_cost
@@ -2507,6 +2541,33 @@ components:
       - total_pages
       - items
       title: PaginatedResponse[CustomerResponse]
+    PaginatedResponse_ExpenseResponse_:
+      properties:
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        page_size:
+          type: integer
+          title: Page Size
+        total_pages:
+          type: integer
+          title: Total Pages
+        items:
+          items:
+            $ref: '#/components/schemas/ExpenseResponse'
+          type: array
+          title: Items
+      type: object
+      required:
+      - total
+      - page
+      - page_size
+      - total_pages
+      - items
+      title: PaginatedResponse[ExpenseResponse]
     PaginatedResponse_IngredientPurchaseResponse_:
       properties:
         total:
@@ -2731,17 +2792,14 @@ components:
           - type: 'null'
           title: Description
         price:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,2}0*$
+          type: number
           title: Price
         unit:
           $ref: '#/components/schemas/ProductUnit'
           default: unidad
         min_stock_alert:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,3}0*$
+          type: number
           title: Min Stock Alert
-          default: '0.000'
         id:
           type: string
           format: uuid
@@ -2751,8 +2809,7 @@ components:
           format: uuid
           title: Category Id
         stock_quantity:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          type: number
           title: Stock Quantity
         is_active:
           type: boolean
@@ -2769,6 +2826,7 @@ components:
       required:
       - name
       - price
+      - min_stock_alert
       - id
       - category_id
       - stock_quantity
@@ -2872,8 +2930,7 @@ components:
           format: uuid
           title: Product Id
         quantity_produced:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,3}0*$
+          type: number
           title: Quantity Produced
         unit:
           type: string
@@ -2897,8 +2954,7 @@ components:
           format: uuid
           title: User Id
         ingredient_cost:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          type: number
           title: Ingredient Cost
         status:
           $ref: '#/components/schemas/ProductionBatchStatus'
@@ -2937,8 +2993,7 @@ components:
           format: uuid
           title: Product Id
         cost_per_unit:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          type: number
           title: Cost Per Unit
         recipe_count:
           type: integer
@@ -2978,8 +3033,7 @@ components:
     RecipeResponse:
       properties:
         quantity:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d{0,3}0*$
+          type: number
           title: Quantity
         unit:
           $ref: '#/components/schemas/IngredientUnit'
@@ -3038,8 +3092,7 @@ components:
     RedeemPointsResponse:
       properties:
         discount_amount:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          type: number
           title: Discount Amount
         remaining_points:
           type: integer
@@ -3142,19 +3195,16 @@ components:
           format: uuid
           title: Product Id
         quantity:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          type: number
           title: Quantity
         unit:
           type: string
           title: Unit
         unit_price:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          type: number
           title: Unit Price
         subtotal:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          type: number
           title: Subtotal
         created_at:
           type: string
@@ -3198,20 +3248,16 @@ components:
           type: string
           title: Sale Number
         subtotal:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          type: number
           title: Subtotal
         discount_amount:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          type: number
           title: Discount Amount
         tax_amount:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          type: number
           title: Tax Amount
         total_amount:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          type: number
           title: Total Amount
         status:
           $ref: '#/components/schemas/SaleStatus'
@@ -3270,20 +3316,16 @@ components:
           type: string
           title: Sale Number
         subtotal:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          type: number
           title: Subtotal
         discount_amount:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          type: number
           title: Discount Amount
         tax_amount:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          type: number
           title: Tax Amount
         total_amount:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          type: number
           title: Total Amount
         status:
           $ref: '#/components/schemas/SaleStatus'
