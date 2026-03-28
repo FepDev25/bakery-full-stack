@@ -1,3 +1,4 @@
+from datetime import date
 from uuid import UUID
 
 from src.core.exceptions import NotFoundException, ValidationError
@@ -19,18 +20,30 @@ class ExpenseService:
         self.expense_repo = expense_repo
         self.user_repo = user_repo
 
-    # metodo para obtener todos los gastos con paginacion
-    async def get_all(self, skip: int = 0, limit: int = 100) -> list[Expense]:
-        return await self.expense_repo.get_all(skip=skip, limit=limit)
+    async def get_all(
+        self,
+        skip: int = 0,
+        limit: int = 20,
+        from_date: date | None = None,
+        to_date: date | None = None,
+    ) -> list[Expense]:
+        return await self.expense_repo.get_all_filtered(
+            skip=skip, limit=limit, from_date=from_date, to_date=to_date
+        )
 
-    # mmetodo para obtener el gasto por id
+    async def count_all(
+        self,
+        from_date: date | None = None,
+        to_date: date | None = None,
+    ) -> int:
+        return await self.expense_repo.count_filtered(from_date=from_date, to_date=to_date)
+
     async def get_by_id(self, id: UUID) -> Expense:
         expense = await self.expense_repo.get_by_id(id)
         if not expense:
             raise NotFoundException("Gasto no encontrado")
         return expense
 
-    # metodo para registrar un nuevo gasto, valida que el usuario exista y esté activo
     async def create(self, data: ExpenseCreate, user_id: UUID) -> Expense:
         user = await self.user_repo.get_by_id(user_id)
 
@@ -40,7 +53,6 @@ class ExpenseService:
         expense = await self.expense_repo.create(data, user_id=user_id)
         await self.expense_repo.session.commit()
 
-        # loguea el registro del gasto con detalles relevantes para auditoría
         logger.info(
             "Gasto registrado",
             extra={
@@ -51,14 +63,12 @@ class ExpenseService:
         )
         return expense
 
-    # metodo para actualizar un gasto existente
     async def update(self, id: UUID, data: ExpenseUpdate) -> Expense:
         expense = await self.get_by_id(id)
         updated = await self.expense_repo.update(expense, data)
         await self.expense_repo.session.commit()
         return updated
 
-    # metodo para eliminar un gasto
     async def delete(self, id: UUID) -> None:
         expense = await self.get_by_id(id)
         await self.expense_repo.delete(expense)
