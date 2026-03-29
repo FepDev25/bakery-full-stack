@@ -4,6 +4,7 @@ import AppShell from '@/components/layout/AppShell'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { RoleGuard } from '@/components/auth/RoleGuard'
 import LoginPage from '@/features/auth/LoginPage'
+import CatalogPage from '@/features/catalog/CatalogPage'
 import DashboardPage from '@/features/dashboard/DashboardPage'
 
 const Placeholder = ({ title }: { title: string }) => (
@@ -68,7 +69,7 @@ export const router = createBrowserRouter([
           // Catálogo — admin
           {
             element: <RoleGuard allowed={['admin']} />,
-            children: [{ path: 'catalogo/*', element: <Placeholder title="Catálogo" /> }],
+            children: [{ path: 'catalogo/*', element: <CatalogPage /> }],
           },
 
           // Inventario — panadero + contador + admin
