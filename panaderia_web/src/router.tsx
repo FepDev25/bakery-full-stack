@@ -4,6 +4,7 @@ import AppShell from '@/components/layout/AppShell'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { RoleGuard } from '@/components/auth/RoleGuard'
 import LoginPage from '@/features/auth/LoginPage'
+import DashboardPage from '@/features/dashboard/DashboardPage'
 
 const Placeholder = ({ title }: { title: string }) => (
   <div className="flex h-full items-center justify-center text-muted-foreground">
@@ -42,35 +43,47 @@ export const router = createBrowserRouter([
         path: '/app',
         element: <AppShell />,
         children: [
-          // Dashboard a todos los roles
+          // Dashboard — todos los roles
           { index: true, element: <Navigate to="dashboard" replace /> },
-          { path: 'dashboard', element: <Placeholder title="Dashboard" /> },
+          { path: 'dashboard', element: <DashboardPage /> },
 
-          // Ventas a cajero y admin
+          // Ventas — cajero + admin
           {
             element: <RoleGuard allowed={['cajero', 'admin']} />,
             children: [{ path: 'ventas/*', element: <Placeholder title="Ventas" /> }],
           },
 
-          // Producción a panadero y admin
+          // Clientes — cajero + admin
+          {
+            element: <RoleGuard allowed={['cajero', 'admin']} />,
+            children: [{ path: 'clientes/*', element: <Placeholder title="Clientes" /> }],
+          },
+
+          // Producción — panadero + admin
           {
             element: <RoleGuard allowed={['panadero', 'admin']} />,
             children: [{ path: 'produccion/*', element: <Placeholder title="Producción" /> }],
           },
 
-          // Finanzas a contador y admin
-          {
-            element: <RoleGuard allowed={['contador', 'admin']} />,
-            children: [{ path: 'finanzas/*', element: <Placeholder title="Finanzas" /> }],
-          },
-
-          // Catálogo a admin
+          // Catálogo — admin
           {
             element: <RoleGuard allowed={['admin']} />,
             children: [{ path: 'catalogo/*', element: <Placeholder title="Catálogo" /> }],
           },
 
-          // Admin a admin
+          // Inventario — panadero + contador + admin
+          {
+            element: <RoleGuard allowed={['panadero', 'contador', 'admin']} />,
+            children: [{ path: 'inventario/*', element: <Placeholder title="Inventario" /> }],
+          },
+
+          // Finanzas — contador + admin
+          {
+            element: <RoleGuard allowed={['contador', 'admin']} />,
+            children: [{ path: 'finanzas/*', element: <Placeholder title="Finanzas" /> }],
+          },
+
+          // Admin — admin
           {
             element: <RoleGuard allowed={['admin']} />,
             children: [{ path: 'admin/*', element: <Placeholder title="Admin" /> }],
