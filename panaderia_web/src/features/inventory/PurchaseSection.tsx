@@ -75,11 +75,11 @@ export default function PurchaseSection() {
   // Supporting data for names + form selects
   const { data: suppliersPage } = useQuery({
     queryKey: ['suppliers'],
-    queryFn: () => listSuppliers({ pageSize: 200 }),
+    queryFn: () => listSuppliers({ pageSize: 100 }),
   })
   const { data: ingredientsPage } = useQuery({
     queryKey: ['ingredients', 1],
-    queryFn: () => listIngredients({ page: 1, pageSize: 200 }),
+    queryFn: () => listIngredients({ page: 1, pageSize: 100 }),
   })
 
   const supplierName = (id: string) =>

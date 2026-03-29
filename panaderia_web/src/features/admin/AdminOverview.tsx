@@ -64,8 +64,8 @@ export default function AdminOverview() {
         queryFn: () => listSales({ from_date: startOfMonth, to_date: todayStr, pageSize: 100 }),
       },
       { queryKey: ['overview-batches'], queryFn: () => listBatches({ pageSize: 100 }) },
-      { queryKey: ['overview-ingredients'], queryFn: () => listIngredients({ page: 1, pageSize: 200 }) },
-      { queryKey: ['overview-products'], queryFn: () => listProducts({ page: 1, pageSize: 200 }) },
+      { queryKey: ['overview-ingredients'], queryFn: () => listIngredients({ page: 1, pageSize: 100 }) },
+      { queryKey: ['overview-products'], queryFn: () => listProducts({ page: 1, pageSize: 100 }) },
       {
         queryKey: ['overview-expenses', startOfMonth, todayStr],
         queryFn: () => listExpenses({ from_date: startOfMonth, to_date: todayStr, pageSize: 100 }),

@@ -49,7 +49,7 @@ export default function SupplierSection() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['suppliers'],
-    queryFn: () => listSuppliers({ pageSize: 200 }),
+    queryFn: () => listSuppliers({ pageSize: 100 }),
   })
 
   const {

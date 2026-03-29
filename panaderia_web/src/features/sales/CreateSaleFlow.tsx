@@ -229,7 +229,7 @@ function StepCierre({
 
   const { data: customers } = useQuery({
     queryKey: ['customers-all'],
-    queryFn: () => listCustomers({ pageSize: 200 }),
+    queryFn: () => listCustomers({ pageSize: 100 }),
   })
 
   const filteredCustomers = useMemo(() => {

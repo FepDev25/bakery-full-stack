@@ -69,7 +69,7 @@ export default function CreateBatchForm() {
 
   const { data: ingredientsPage } = useQuery({
     queryKey: ['ingredients', 1],
-    queryFn: () => listIngredients({ page: 1, pageSize: 200 }),
+    queryFn: () => listIngredients({ page: 1, pageSize: 100 }),
   })
 
   const selectedProduct = products?.items.find((p) => p.id === selectedProductId)

@@ -90,7 +90,7 @@ export default function DashboardPage() {
       },
       {
         queryKey: ['dash-ingredients'],
-        queryFn: () => listIngredients({ page: 1, pageSize: 200 }),
+        queryFn: () => listIngredients({ page: 1, pageSize: 100 }),
         enabled: canSeeInventory,
       },
     ],
