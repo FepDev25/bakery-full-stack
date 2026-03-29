@@ -238,19 +238,21 @@ export default function UserListSection() {
                       <Button
                         variant="ghost"
                         size="icon"
+                        aria-label={`Editar ${u.full_name}`}
                         onClick={() => setEditingUser(u)}
                       >
-                        <Pencil className="h-4 w-4" />
+                        <Pencil className="h-4 w-4" aria-hidden />
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon"
                         disabled={u.id === me?.id || toggleMutation.isPending}
+                        aria-label={u.is_active ? `Desactivar ${u.full_name}` : `Activar ${u.full_name}`}
                         title={u.id === me?.id ? 'No podés desactivarte a vos mismo' : undefined}
                         className={u.is_active ? 'text-destructive hover:text-destructive' : 'text-emerald-600 hover:text-emerald-600'}
                         onClick={() => toggleMutation.mutate({ id: u.id, is_active: !u.is_active })}
                       >
-                        <PowerOff className="h-4 w-4" />
+                        <PowerOff className="h-4 w-4" aria-hidden />
                       </Button>
                     </div>
                   </TableCell>
