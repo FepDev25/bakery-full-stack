@@ -184,16 +184,22 @@ export default function SupplierSection() {
             header: '',
             cell: ({ row }: { row: { original: SupplierResponse } }) => (
               <div className="flex justify-end gap-1">
-                <Button variant="ghost" size="icon" onClick={() => openEdit(row.original)}>
-                  <Pencil className="h-4 w-4" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label={`Editar ${row.original.name}`}
+                  onClick={() => openEdit(row.original)}
+                >
+                  <Pencil className="h-4 w-4" aria-hidden />
                 </Button>
                 <Button
                   variant="ghost"
                   size="icon"
+                  aria-label={`Eliminar ${row.original.name}`}
                   className="text-destructive hover:text-destructive"
                   onClick={() => setConfirmDelete(row.original)}
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className="h-4 w-4" aria-hidden />
                 </Button>
               </div>
             ),
