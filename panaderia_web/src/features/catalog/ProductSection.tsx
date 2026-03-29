@@ -286,17 +286,19 @@ export function ProductSection() {
           <Button
             variant="ghost"
             size="icon"
+            aria-label={`Editar ${row.original.name}`}
             onClick={() => { setEditing(row.original); setDrawerOpen(true) }}
           >
-            <Pencil className="h-4 w-4" aria-label="Editar" />
+            <Pencil className="h-4 w-4" aria-hidden />
           </Button>
           <Button
             variant="ghost"
             size="icon"
+            aria-label={`Eliminar ${row.original.name}`}
             className="text-destructive hover:text-destructive"
             onClick={() => setDeleting(row.original)}
           >
-            <Trash2 className="h-4 w-4" aria-label="Eliminar" />
+            <Trash2 className="h-4 w-4" aria-hidden />
           </Button>
         </div>
       ),

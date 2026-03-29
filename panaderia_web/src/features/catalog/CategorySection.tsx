@@ -165,16 +165,17 @@ export function CategorySection() {
                 )}
               </div>
               <div className="ml-4 flex shrink-0 gap-1">
-                <Button variant="ghost" size="icon" onClick={() => openEdit(cat)}>
-                  <Pencil className="h-4 w-4" aria-label="Editar" />
+                <Button variant="ghost" size="icon" aria-label={`Editar ${cat.name}`} onClick={() => openEdit(cat)}>
+                  <Pencil className="h-4 w-4" aria-hidden />
                 </Button>
                 <Button
                   variant="ghost"
                   size="icon"
+                  aria-label={`Eliminar ${cat.name}`}
                   className="text-destructive hover:text-destructive"
                   onClick={() => setDeleting(cat)}
                 >
-                  <Trash2 className="h-4 w-4" aria-label="Eliminar" />
+                  <Trash2 className="h-4 w-4" aria-hidden />
                 </Button>
               </div>
             </div>
