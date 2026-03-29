@@ -10,6 +10,9 @@ import CreateSaleFlow from '@/features/sales/CreateSaleFlow'
 import SaleListPage from '@/features/sales/SaleListPage'
 import CustomerDetailPage from '@/features/customers/CustomerDetailPage'
 import CustomerListPage from '@/features/customers/CustomerListPage'
+import BatchDetailPage from '@/features/production/BatchDetailPage'
+import CreateBatchForm from '@/features/production/CreateBatchForm'
+import ProductionListPage from '@/features/production/ProductionListPage'
 
 const Placeholder = ({ title }: { title: string }) => (
   <div className="flex h-full items-center justify-center text-muted-foreground">
@@ -73,7 +76,11 @@ export const router = createBrowserRouter([
           // Producción — panadero + admin
           {
             element: <RoleGuard allowed={['panadero', 'admin']} />,
-            children: [{ path: 'produccion/*', element: <Placeholder title="Producción" /> }],
+            children: [
+              { path: 'produccion', element: <ProductionListPage /> },
+              { path: 'produccion/nuevo', element: <CreateBatchForm /> },
+              { path: 'produccion/:id', element: <BatchDetailPage /> },
+            ],
           },
 
           // Catálogo — admin
