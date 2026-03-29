@@ -8,6 +8,8 @@ import CatalogPage from '@/features/catalog/CatalogPage'
 import DashboardPage from '@/features/dashboard/DashboardPage'
 import CreateSaleFlow from '@/features/sales/CreateSaleFlow'
 import SaleListPage from '@/features/sales/SaleListPage'
+import CustomerDetailPage from '@/features/customers/CustomerDetailPage'
+import CustomerListPage from '@/features/customers/CustomerListPage'
 
 const Placeholder = ({ title }: { title: string }) => (
   <div className="flex h-full items-center justify-center text-muted-foreground">
@@ -62,7 +64,10 @@ export const router = createBrowserRouter([
           // Clientes — cajero + admin
           {
             element: <RoleGuard allowed={['cajero', 'admin']} />,
-            children: [{ path: 'clientes/*', element: <Placeholder title="Clientes" /> }],
+            children: [
+              { path: 'clientes', element: <CustomerListPage /> },
+              { path: 'clientes/:id', element: <CustomerDetailPage /> },
+            ],
           },
 
           // Producción — panadero + admin
