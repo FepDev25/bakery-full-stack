@@ -5,7 +5,9 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import type { ReactNode } from 'react'
 
+import { EmptyState } from '@/components/shared/EmptyState'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -36,6 +38,8 @@ interface DataTableProps<TData> {
   onPageChange: (page: number) => void
   isLoading?: boolean
   emptyMessage?: string
+  /** Overrides emptyMessage with a full EmptyState component */
+  emptyState?: ReactNode
 }
 
 export function DataTable<TData>({
@@ -48,12 +52,12 @@ export function DataTable<TData>({
   onPageChange,
   isLoading = false,
   emptyMessage = 'No hay datos.',
+  emptyState,
 }: DataTableProps<TData>) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    // La paginación es server-side, no se usa el paginador interno de TanStack
     manualPagination: true,
     pageCount: totalPages,
   })
@@ -63,13 +67,16 @@ export function DataTable<TData>({
 
   return (
     <div className="space-y-3">
-      <div className="rounded-lg border border-border bg-card overflow-hidden">
+      <div className="rounded-lg border border-border bg-card overflow-x-auto">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="bg-muted/40 hover:bg-muted/40">
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="font-semibold text-foreground/70 text-xs uppercase tracking-wide">
+                  <TableHead
+                    key={header.id}
+                    className="font-semibold text-foreground/70 text-xs uppercase tracking-wide whitespace-nowrap"
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}
@@ -80,7 +87,6 @@ export function DataTable<TData>({
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              // Skeleton rows
               Array.from({ length: pageSize > 5 ? 5 : pageSize }).map((_, i) => (
                 <TableRow key={i}>
                   {columns.map((_, j) => (
@@ -92,15 +98,20 @@ export function DataTable<TData>({
               ))
             ) : table.getRowModel().rows.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
-                  {emptyMessage}
+                <TableCell colSpan={columns.length} className="p-0">
+                  {emptyState ?? (
+                    <EmptyState
+                      title={emptyMessage}
+                      description="Todavía no hay registros en esta sección."
+                    />
+                  )}
                 </TableCell>
               </TableRow>
             ) : (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} className="hover:bg-muted/30 transition-colors">
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="whitespace-nowrap">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
@@ -125,7 +136,7 @@ export function DataTable<TData>({
               disabled={page <= 1 || isLoading}
               aria-label="Página anterior"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4" aria-hidden />
             </Button>
             <span className="min-w-[4rem] text-center text-sm text-muted-foreground">
               {page} / {totalPages}
@@ -137,7 +148,7 @@ export function DataTable<TData>({
               disabled={page >= totalPages || isLoading}
               aria-label="Página siguiente"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4" aria-hidden />
             </Button>
           </div>
         </div>
