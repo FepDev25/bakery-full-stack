@@ -1,6 +1,8 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
 
 import AppShell from '@/components/layout/AppShell'
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
+import { RoleGuard } from '@/components/auth/RoleGuard'
 import LoginPage from '@/features/auth/LoginPage'
 
 const Placeholder = ({ title }: { title: string }) => (
@@ -11,35 +13,72 @@ const Placeholder = ({ title }: { title: string }) => (
 
 const NotFound = () => (
   <div className="flex h-screen flex-col items-center justify-center gap-2">
-    <p className="text-4xl font-bold">404</p>
+    <p className="text-5xl font-bold text-foreground">404</p>
     <p className="text-muted-foreground">Página no encontrada.</p>
   </div>
 )
 
 const Forbidden = () => (
   <div className="flex h-screen flex-col items-center justify-center gap-2">
-    <p className="text-4xl font-bold text-destructive">403</p>
+    <p className="text-5xl font-bold text-destructive">403</p>
     <p className="text-muted-foreground">No tenés permiso para acceder a esta sección.</p>
   </div>
 )
 
 export const router = createBrowserRouter([
+  // Rutas públicas
   { path: '/login', element: <LoginPage /> },
   { path: '/403', element: <Forbidden /> },
   { path: '/404', element: <NotFound /> },
+
+  // Raíz: redirige al login
+  { path: '/', element: <Navigate to="/login" replace /> },
+
+  // Rutas protegidas
   {
-    path: '/app',
-    element: <AppShell />,
+    element: <ProtectedRoute />,
     children: [
-      { index: true, element: <Placeholder title="Dashboard" /> },
-      { path: 'dashboard', element: <Placeholder title="Dashboard" /> },
-      { path: 'ventas/*', element: <Placeholder title="Ventas" /> },
-      { path: 'produccion/*', element: <Placeholder title="Producción" /> },
-      { path: 'finanzas/*', element: <Placeholder title="Finanzas" /> },
-      { path: 'catalogo/*', element: <Placeholder title="Catálogo" /> },
-      { path: 'admin/*', element: <Placeholder title="Admin" /> },
+      {
+        path: '/app',
+        element: <AppShell />,
+        children: [
+          // Dashboard a todos los roles
+          { index: true, element: <Navigate to="dashboard" replace /> },
+          { path: 'dashboard', element: <Placeholder title="Dashboard" /> },
+
+          // Ventas a cajero y admin
+          {
+            element: <RoleGuard allowed={['cajero', 'admin']} />,
+            children: [{ path: 'ventas/*', element: <Placeholder title="Ventas" /> }],
+          },
+
+          // Producción a panadero y admin
+          {
+            element: <RoleGuard allowed={['panadero', 'admin']} />,
+            children: [{ path: 'produccion/*', element: <Placeholder title="Producción" /> }],
+          },
+
+          // Finanzas a contador y admin
+          {
+            element: <RoleGuard allowed={['contador', 'admin']} />,
+            children: [{ path: 'finanzas/*', element: <Placeholder title="Finanzas" /> }],
+          },
+
+          // Catálogo a admin
+          {
+            element: <RoleGuard allowed={['admin']} />,
+            children: [{ path: 'catalogo/*', element: <Placeholder title="Catálogo" /> }],
+          },
+
+          // Admin a admin
+          {
+            element: <RoleGuard allowed={['admin']} />,
+            children: [{ path: 'admin/*', element: <Placeholder title="Admin" /> }],
+          },
+        ],
+      },
     ],
   },
-  { path: '/', element: <Placeholder title="Inicio" /> },
+
   { path: '*', element: <NotFound /> },
 ])
