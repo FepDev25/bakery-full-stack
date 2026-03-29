@@ -93,8 +93,8 @@ export async function listProducts(params?: {
 }) {
   const { data } = await apiClient.get<PaginatedResponse<ProductResponse>>('/api/v1/products', {
     params: {
-      page: params?.page ?? 1,
-      page_size: params?.pageSize ?? 20,
+      page: Math.max(1, params?.page ?? 1),
+      page_size: Math.min(100, params?.pageSize ?? 20),
       search: params?.search ?? undefined,
       is_active: params?.is_active ?? true,
     },
@@ -138,7 +138,7 @@ export async function deleteProduct(id: string) {
 export async function listIngredients(params?: { page?: number; pageSize?: number }) {
   const { data } = await apiClient.get<PaginatedResponse<IngredientResponse>>(
     '/api/v1/ingredients',
-    { params: { page: params?.page ?? 1, page_size: params?.pageSize ?? 20 } },
+    { params: { page: Math.max(1, params?.page ?? 1), page_size: Math.min(100, params?.pageSize ?? 20) } },
   )
   return data
 }

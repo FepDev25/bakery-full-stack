@@ -36,7 +36,7 @@ export interface IngredientPurchaseResponse {
 
 export async function listSuppliers(params?: { page?: number; pageSize?: number }) {
   const { data } = await apiClient.get<PaginatedResponse<SupplierResponse>>('/api/v1/suppliers', {
-    params: { page: params?.page ?? 1, page_size: params?.pageSize ?? 100 },
+    params: { page: Math.max(1, params?.page ?? 1), page_size: Math.min(100, params?.pageSize ?? 20) },
   })
   return data
 }
@@ -77,7 +77,7 @@ export async function deleteSupplier(id: string) {
 export async function listPurchases(params?: { page?: number; pageSize?: number }) {
   const { data } = await apiClient.get<PaginatedResponse<IngredientPurchaseResponse>>(
     '/api/v1/ingredient-purchases',
-    { params: { page: params?.page ?? 1, page_size: params?.pageSize ?? 20 } },
+    { params: { page: Math.max(1, params?.page ?? 1), page_size: Math.min(100, params?.pageSize ?? 20) } },
   )
   return data
 }
@@ -85,7 +85,7 @@ export async function listPurchases(params?: { page?: number; pageSize?: number 
 export async function listPurchasesBySupplier(supplierId: string, params?: { page?: number }) {
   const { data } = await apiClient.get<PaginatedResponse<IngredientPurchaseResponse>>(
     `/api/v1/ingredient-purchases/by-supplier/${supplierId}`,
-    { params: { page: params?.page ?? 1, page_size: 20 } },
+    { params: { page: Math.max(1, params?.page ?? 1), page_size: 20 } },
   )
   return data
 }
@@ -93,7 +93,7 @@ export async function listPurchasesBySupplier(supplierId: string, params?: { pag
 export async function listPurchasesByIngredient(ingredientId: string, params?: { page?: number }) {
   const { data } = await apiClient.get<PaginatedResponse<IngredientPurchaseResponse>>(
     `/api/v1/ingredient-purchases/by-ingredient/${ingredientId}`,
-    { params: { page: params?.page ?? 1, page_size: 20 } },
+    { params: { page: Math.max(1, params?.page ?? 1), page_size: 20 } },
   )
   return data
 }
