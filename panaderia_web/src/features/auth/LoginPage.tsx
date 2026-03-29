@@ -14,7 +14,7 @@ import type { Role } from './useAuthStore'
 import { useAuthStore } from './useAuthStore'
 
 const loginSchema = z.object({
-  email: z.string().email('Email inválido'),
+  email: z.email('Email inválido'),
   password: z.string().min(1, 'La contraseña es requerida'),
 })
 
