@@ -13,12 +13,10 @@ import CustomerListPage from '@/features/customers/CustomerListPage'
 import BatchDetailPage from '@/features/production/BatchDetailPage'
 import CreateBatchForm from '@/features/production/CreateBatchForm'
 import ProductionListPage from '@/features/production/ProductionListPage'
+import InventoryPage from '@/features/inventory/InventoryPage'
+import FinancePage from '@/features/finance/FinancePage'
+import AdminPage from '@/features/admin/AdminPage'
 
-const Placeholder = ({ title }: { title: string }) => (
-  <div className="flex h-full items-center justify-center text-muted-foreground">
-    <p>{title} — próximamente</p>
-  </div>
-)
 
 const NotFound = () => (
   <div className="flex h-screen flex-col items-center justify-center gap-2">
@@ -92,19 +90,19 @@ export const router = createBrowserRouter([
           // Inventario — panadero + contador + admin
           {
             element: <RoleGuard allowed={['panadero', 'contador', 'admin']} />,
-            children: [{ path: 'inventario/*', element: <Placeholder title="Inventario" /> }],
+            children: [{ path: 'inventario/*', element: <InventoryPage /> }],
           },
 
           // Finanzas — contador + admin
           {
             element: <RoleGuard allowed={['contador', 'admin']} />,
-            children: [{ path: 'finanzas/*', element: <Placeholder title="Finanzas" /> }],
+            children: [{ path: 'finanzas/*', element: <FinancePage /> }],
           },
 
           // Admin — admin
           {
             element: <RoleGuard allowed={['admin']} />,
-            children: [{ path: 'admin/*', element: <Placeholder title="Admin" /> }],
+            children: [{ path: 'admin/*', element: <AdminPage /> }],
           },
         ],
       },
