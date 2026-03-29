@@ -6,6 +6,8 @@ import { RoleGuard } from '@/components/auth/RoleGuard'
 import LoginPage from '@/features/auth/LoginPage'
 import CatalogPage from '@/features/catalog/CatalogPage'
 import DashboardPage from '@/features/dashboard/DashboardPage'
+import CreateSaleFlow from '@/features/sales/CreateSaleFlow'
+import SaleListPage from '@/features/sales/SaleListPage'
 
 const Placeholder = ({ title }: { title: string }) => (
   <div className="flex h-full items-center justify-center text-muted-foreground">
@@ -51,7 +53,10 @@ export const router = createBrowserRouter([
           // Ventas — cajero + admin
           {
             element: <RoleGuard allowed={['cajero', 'admin']} />,
-            children: [{ path: 'ventas/*', element: <Placeholder title="Ventas" /> }],
+            children: [
+              { path: 'ventas', element: <SaleListPage /> },
+              { path: 'ventas/nueva', element: <CreateSaleFlow /> },
+            ],
           },
 
           // Clientes — cajero + admin
