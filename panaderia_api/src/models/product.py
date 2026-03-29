@@ -33,7 +33,7 @@ class Product(Base, TimestampMixin):
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     price: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     unit: Mapped[ProductUnit] = mapped_column(
-        SAEnum(ProductUnit, name="product_unit"),
+        SAEnum(ProductUnit, name="product_unit", values_callable=lambda objs: [e.value for e in objs], create_type=False),
         nullable=False,
         default=ProductUnit.UNIDAD
     )

@@ -23,7 +23,7 @@ class Ingredient(Base, TimestampMixin):
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
     unit: Mapped[IngredientUnit] = mapped_column(
-        SAEnum(IngredientUnit, name="ingredient_unit"),
+        SAEnum(IngredientUnit, name="ingredient_unit", values_callable=lambda objs: [e.value for e in objs], create_type=False),
         nullable=False,
         default=IngredientUnit.KG
     )

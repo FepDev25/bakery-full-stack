@@ -25,7 +25,7 @@ class Expense(Base):
         UUID(as_uuid=True), ForeignKey("users.id"), nullable=False
     )
     category: Mapped[ExpenseCategory] = mapped_column(
-        SAEnum(ExpenseCategory, name="expense_category"),
+        SAEnum(ExpenseCategory, name="expense_category", values_callable=lambda objs: [e.value for e in objs], create_type=False),
         nullable=False
     )
     description: Mapped[str] = mapped_column(String(255), nullable=False)

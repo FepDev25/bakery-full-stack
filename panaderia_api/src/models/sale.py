@@ -35,12 +35,12 @@ class Sale(Base):
     tax_amount: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False, default=0)
     total_amount: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     payment_method: Mapped[PaymentMethod] = mapped_column(
-        SAEnum(PaymentMethod, name="payment_method"),
+        SAEnum(PaymentMethod, name="payment_method", values_callable=lambda objs: [e.value for e in objs], create_type=False),
         nullable=False,
         default=PaymentMethod.EFECTIVO
     )
     status: Mapped[SaleStatus] = mapped_column(
-        SAEnum(SaleStatus, name="sale_status"),
+        SAEnum(SaleStatus, name="sale_status", values_callable=lambda objs: [e.value for e in objs], create_type=False),
         nullable=False,
         default=SaleStatus.COMPLETADA
     )

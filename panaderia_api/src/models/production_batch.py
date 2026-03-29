@@ -36,7 +36,7 @@ class ProductionBatch(Base, TimestampMixin):
     )
     ingredient_cost: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False, default=Decimal("0.00"))
     status: Mapped[ProductionBatchStatus] = mapped_column(
-        SAEnum(ProductionBatchStatus, name="production_batch_status"),
+        SAEnum(ProductionBatchStatus, name="production_batch_status", values_callable=lambda objs: [e.value for e in objs], create_type=False),
         nullable=False,
         default=ProductionBatchStatus.EN_PROCESO
     )

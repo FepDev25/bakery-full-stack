@@ -31,7 +31,7 @@ class Recipe(Base):
     )
     quantity: Mapped[Decimal] = mapped_column(Numeric(10, 3), nullable=False)
     unit: Mapped[IngredientUnit] = mapped_column(
-        SAEnum(IngredientUnit, name="ingredient_unit"),
+        SAEnum(IngredientUnit, name="ingredient_unit", values_callable=lambda objs: [e.value for e in objs], create_type=False),
         nullable=False
     )
     created_at: Mapped[datetime] = mapped_column(
