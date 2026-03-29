@@ -1,9 +1,16 @@
+import { useQueries } from '@tanstack/react-query'
 import { AlertTriangle, Loader2, ShoppingCart, Truck } from 'lucide-react'
 
+import { listIngredients } from '@/api/catalog'
+import { listBatches } from '@/api/production'
+import { listSales } from '@/api/sales'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useAuthStore } from '@/features/auth/useAuthStore'
 import { cn } from '@/lib/utils'
+import { formatCurrency } from '@/lib/format'
 
-// Estructura de cada tarjeta de métrica
+// Metric Card
+
 interface MetricCardProps {
   title: string
   value: string | number
@@ -56,50 +63,98 @@ function MetricCard({
   )
 }
 
-// Placeholder — los valores reales se conectan en Sprint 9
+// Dashboard
+
+const todayStr = new Date().toISOString().slice(0, 10)
+
 export default function DashboardPage() {
+  const { user } = useAuthStore()
+  const role = user?.role
+
+  const canSeeSales = role === 'cajero' || role === 'admin'
+  const canSeeProduction = role === 'panadero' || role === 'admin'
+  const canSeeInventory = role === 'panadero' || role === 'contador' || role === 'admin'
+
+  const [salesQuery, batchesQuery, ingredientsQuery] = useQueries({
+    queries: [
+      {
+        queryKey: ['dash-sales', todayStr],
+        queryFn: () =>
+          listSales({ from_date: todayStr, to_date: todayStr, pageSize: 100 }),
+        enabled: canSeeSales,
+      },
+      {
+        queryKey: ['dash-batches'],
+        queryFn: () => listBatches({ pageSize: 100 }),
+        enabled: canSeeProduction,
+      },
+      {
+        queryKey: ['dash-ingredients'],
+        queryFn: () => listIngredients({ page: 1, pageSize: 200 }),
+        enabled: canSeeInventory,
+      },
+    ],
+  })
+
+  const todaySales = (salesQuery.data?.items ?? []).filter((s) => s.status === 'completada')
+  const todayRevenue = todaySales.reduce((sum, s) => sum + s.total_amount, 0)
+
+  const activeBatches = (batchesQuery.data?.items ?? []).filter((b) => b.status === 'en_proceso')
+
+  const lowStockIngredients = (ingredientsQuery.data?.items ?? []).filter(
+    (i) => i.stock_quantity <= i.min_stock_alert,
+  )
+
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-bold tracking-tight">Resumen del día</h2>
         <p className="text-sm text-muted-foreground">
-          Las métricas en tiempo real estarán disponibles en la próxima versión.
+          {new Date().toLocaleDateString('es-AR', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })}
         </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <MetricCard
-          title="Ventas del día"
-          value="—"
-          description="Total facturado hoy"
-          icon={ShoppingCart}
-          iconClassName="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
-        />
-        <MetricCard
-          title="Lotes activos"
-          value="—"
-          description="En proceso de producción"
-          icon={Truck}
-          iconClassName="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
-        />
-        <MetricCard
-          title="Stock bajo"
-          value="—"
-          description="Ingredientes por debajo del mínimo"
-          icon={AlertTriangle}
-          iconClassName="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
-          alert={false}
-        />
-      </div>
+        {canSeeSales && (
+          <MetricCard
+            title="Ventas del día"
+            value={salesQuery.isLoading ? '—' : formatCurrency(todayRevenue)}
+            description={
+              salesQuery.isLoading ? '' : `${todaySales.length} venta${todaySales.length !== 1 ? 's' : ''} completada${todaySales.length !== 1 ? 's' : ''}`
+            }
+            icon={ShoppingCart}
+            iconClassName="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+            loading={salesQuery.isLoading}
+          />
+        )}
 
-      {/* Espacio para futuros gráficos (Sprint 9) */}
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Card className="flex min-h-48 items-center justify-center border-dashed">
-          <p className="text-sm text-muted-foreground">Gráfico de ventas semanales — Sprint 9</p>
-        </Card>
-        <Card className="flex min-h-48 items-center justify-center border-dashed">
-          <p className="text-sm text-muted-foreground">Top productos del mes — Sprint 9</p>
-        </Card>
+        {canSeeProduction && (
+          <MetricCard
+            title="Lotes activos"
+            value={batchesQuery.isLoading ? '—' : activeBatches.length}
+            description="En proceso de producción"
+            icon={Truck}
+            iconClassName="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
+            loading={batchesQuery.isLoading}
+          />
+        )}
+
+        {canSeeInventory && (
+          <MetricCard
+            title="Stock bajo"
+            value={ingredientsQuery.isLoading ? '—' : lowStockIngredients.length}
+            description="Ingredientes por debajo del mínimo"
+            icon={AlertTriangle}
+            iconClassName="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+            alert={!ingredientsQuery.isLoading && lowStockIngredients.length > 0}
+            loading={ingredientsQuery.isLoading}
+          />
+        )}
       </div>
     </div>
   )
