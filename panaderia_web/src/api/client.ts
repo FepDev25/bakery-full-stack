@@ -38,9 +38,10 @@ apiClient.interceptors.response.use(
   async (error) => {
     const original = error.config as AxiosRequestConfig & { _retry?: boolean }
 
-    // No entrar en loop si el 401 viene del propio endpoint de refresh
-    const isRefreshEndpoint = original.url?.includes('/auth/refresh')
-    if (error.response?.status !== 401 || original._retry || isRefreshEndpoint) {
+    // No intentar refresh en endpoints públicos de auth (login/refresh)
+    const isPublicAuthEndpoint =
+      original.url?.includes('/auth/login') || original.url?.includes('/auth/refresh')
+    if (error.response?.status !== 401 || original._retry || isPublicAuthEndpoint) {
       return Promise.reject(error)
     }
 
