@@ -217,8 +217,8 @@ INSERT INTO production_batches (product_id, user_id, quantity_produced, unit, pr
 -- 10. VENTAS (Últimos 5 días)
 
 -- Venta 1: Cliente con puntos (hace 5 días)
-INSERT INTO sales (customer_id, user_id, subtotal, discount_amount, tax_amount, total_amount, payment_method, status, sale_date) VALUES
-('50000000-0000-0000-0000-000000000002', 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 4500.00, 0.00, 0.00, 4500.00, 'tarjeta_credito', 'completada', CURRENT_DATE - INTERVAL '5 days');
+INSERT INTO sales (sale_number, customer_id, user_id, subtotal, discount_amount, tax_amount, total_amount, payment_method, status, sale_date) VALUES
+('VTA-2026-90001', '50000000-0000-0000-0000-000000000002', 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 4500.00, 0.00, 0.00, 4500.00, 'tarjeta_credito', 'completada', CURRENT_DATE - INTERVAL '5 days');
 
 INSERT INTO sale_items (sale_id, product_id, quantity, unit, unit_price, subtotal) VALUES
 ((SELECT id FROM sales WHERE sale_date = CURRENT_DATE - INTERVAL '5 days' LIMIT 1), '40000000-0000-0000-0000-000000000001', 3.000, 'unidad', 850.00, 2550.00),
@@ -226,23 +226,23 @@ INSERT INTO sale_items (sale_id, product_id, quantity, unit, unit_price, subtota
 ((SELECT id FROM sales WHERE sale_date = CURRENT_DATE - INTERVAL '5 days' LIMIT 1), '40000000-0000-0000-0000-000000000014', 1.000, 'unidad', 900.00, 900.00);
 
 -- Venta 2: Anónima (hace 5 días)
-INSERT INTO sales (customer_id, user_id, subtotal, discount_amount, tax_amount, total_amount, payment_method, status, sale_date) VALUES
-(NULL, 'b2eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', 2050.00, 0.00, 0.00, 2050.00, 'efectivo', 'completada', CURRENT_DATE - INTERVAL '5 days');
+INSERT INTO sales (sale_number, customer_id, user_id, subtotal, discount_amount, tax_amount, total_amount, payment_method, status, sale_date) VALUES
+('VTA-2026-90002', NULL, 'b2eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', 2050.00, 0.00, 0.00, 2050.00, 'efectivo', 'completada', CURRENT_DATE - INTERVAL '5 days');
 
 INSERT INTO sale_items (sale_id, product_id, quantity, unit, unit_price, subtotal) VALUES
 ((SELECT id FROM sales WHERE customer_id IS NULL AND sale_date = CURRENT_DATE - INTERVAL '5 days' LIMIT 1), '40000000-0000-0000-0000-000000000002', 2.000, 'unidad', 950.00, 1900.00),
 ((SELECT id FROM sales WHERE customer_id IS NULL AND sale_date = CURRENT_DATE - INTERVAL '5 days' LIMIT 1), '40000000-0000-0000-0000-000000000014', 1.000, 'unidad', 900.00, 900.00);
 
 -- Venta 3: Cliente VIP con uso de puntos (hace 4 días)
-INSERT INTO sales (customer_id, user_id, subtotal, discount_amount, tax_amount, total_amount, payment_method, status, sale_date) VALUES
-('50000000-0000-0000-0000-000000000006', 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 9200.00, 50.00, 0.00, 9150.00, 'transferencia', 'completada', CURRENT_DATE - INTERVAL '4 days');
+INSERT INTO sales (sale_number, customer_id, user_id, subtotal, discount_amount, tax_amount, total_amount, payment_method, status, sale_date) VALUES
+('VTA-2026-90003', '50000000-0000-0000-0000-000000000006', 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 9200.00, 50.00, 0.00, 9150.00, 'transferencia', 'completada', CURRENT_DATE - INTERVAL '4 days');
 
 INSERT INTO sale_items (sale_id, product_id, quantity, unit, unit_price, subtotal) VALUES
 ((SELECT id FROM sales WHERE customer_id = '50000000-0000-0000-0000-000000000006' AND sale_date = CURRENT_DATE - INTERVAL '4 days' LIMIT 1), '40000000-0000-0000-0000-000000000007', 1.000, 'unidad', 9200.00, 9200.00);
 
 -- Venta 4: Compra grande anónima (hace 3 días)
-INSERT INTO sales (customer_id, user_id, subtotal, discount_amount, tax_amount, total_amount, payment_method, status, sale_date) VALUES
-(NULL, 'b2eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', 8950.00, 0.00, 0.00, 8950.00, 'tarjeta_debito', 'completada', CURRENT_DATE - INTERVAL '3 days');
+INSERT INTO sales (sale_number, customer_id, user_id, subtotal, discount_amount, tax_amount, total_amount, payment_method, status, sale_date) VALUES
+('VTA-2026-90004', NULL, 'b2eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', 8950.00, 0.00, 0.00, 8950.00, 'tarjeta_debito', 'completada', CURRENT_DATE - INTERVAL '3 days');
 
 INSERT INTO sale_items (sale_id, product_id, quantity, unit, unit_price, subtotal) VALUES
 ((SELECT id FROM sales WHERE sale_date = CURRENT_DATE - INTERVAL '3 days' AND total_amount = 8950.00 LIMIT 1), '40000000-0000-0000-0000-000000000001', 5.000, 'unidad', 850.00, 4250.00),
@@ -250,30 +250,30 @@ INSERT INTO sale_items (sale_id, product_id, quantity, unit, unit_price, subtota
 ((SELECT id FROM sales WHERE sale_date = CURRENT_DATE - INTERVAL '3 days' AND total_amount = 8950.00 LIMIT 1), '40000000-0000-0000-0000-000000000009', 4.000, 'unidad', 450.00, 1800.00);
 
 -- Venta 5: Cliente registrado (hace 2 días)
-INSERT INTO sales (customer_id, user_id, subtotal, discount_amount, tax_amount, total_amount, payment_method, status, sale_date) VALUES
-('50000000-0000-0000-0000-000000000001', 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 3200.00, 0.00, 0.00, 3200.00, 'qr', 'completada', CURRENT_DATE - INTERVAL '2 days');
+INSERT INTO sales (sale_number, customer_id, user_id, subtotal, discount_amount, tax_amount, total_amount, payment_method, status, sale_date) VALUES
+('VTA-2026-90005', '50000000-0000-0000-0000-000000000001', 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 3200.00, 0.00, 0.00, 3200.00, 'qr', 'completada', CURRENT_DATE - INTERVAL '2 days');
 
 INSERT INTO sale_items (sale_id, product_id, quantity, unit, unit_price, subtotal) VALUES
 ((SELECT id FROM sales WHERE customer_id = '50000000-0000-0000-0000-000000000001' AND sale_date = CURRENT_DATE - INTERVAL '2 days' LIMIT 1), '40000000-0000-0000-0000-000000000012', 4.000, 'unidad', 650.00, 2600.00),
 ((SELECT id FROM sales WHERE customer_id = '50000000-0000-0000-0000-000000000001' AND sale_date = CURRENT_DATE - INTERVAL '2 days' LIMIT 1), '40000000-0000-0000-0000-000000000015', 2.000, 'unidad', 1100.00, 2200.00);
 
 -- Venta 6: CANCELADA (hace 2 días)
-INSERT INTO sales (customer_id, user_id, subtotal, discount_amount, tax_amount, total_amount, payment_method, status, sale_date, notes) VALUES
-('50000000-0000-0000-0000-000000000003', 'b2eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', 1700.00, 0.00, 0.00, 1700.00, 'efectivo', 'cancelada', CURRENT_DATE - INTERVAL '2 days', 'Cliente se arrepintió. Revertido.');
+INSERT INTO sales (sale_number, customer_id, user_id, subtotal, discount_amount, tax_amount, total_amount, payment_method, status, sale_date, notes) VALUES
+('VTA-2026-90006', '50000000-0000-0000-0000-000000000003', 'b2eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', 1700.00, 0.00, 0.00, 1700.00, 'efectivo', 'cancelada', CURRENT_DATE - INTERVAL '2 days', 'Cliente se arrepintió. Revertido.');
 
 INSERT INTO sale_items (sale_id, product_id, quantity, unit, unit_price, subtotal) VALUES
 ((SELECT id FROM sales WHERE status = 'cancelada' LIMIT 1), '40000000-0000-0000-0000-000000000002', 2.000, 'unidad', 950.00, 1900.00);
 
 -- Venta 7: Compra de torta (ayer)
-INSERT INTO sales (customer_id, user_id, subtotal, discount_amount, tax_amount, total_amount, payment_method, status, sale_date) VALUES
-('50000000-0000-0000-0000-000000000004', 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 8500.00, 0.00, 0.00, 8500.00, 'tarjeta_credito', 'completada', CURRENT_DATE - INTERVAL '1 day');
+INSERT INTO sales (sale_number, customer_id, user_id, subtotal, discount_amount, tax_amount, total_amount, payment_method, status, sale_date) VALUES
+('VTA-2026-90007', '50000000-0000-0000-0000-000000000004', 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 8500.00, 0.00, 0.00, 8500.00, 'tarjeta_credito', 'completada', CURRENT_DATE - INTERVAL '1 day');
 
 INSERT INTO sale_items (sale_id, product_id, quantity, unit, unit_price, subtotal) VALUES
 ((SELECT id FROM sales WHERE customer_id = '50000000-0000-0000-0000-000000000004' AND sale_date = CURRENT_DATE - INTERVAL '1 day' LIMIT 1), '40000000-0000-0000-0000-000000000006', 1.000, 'unidad', 8500.00, 8500.00);
 
 -- Venta 8: Venta matutina (ayer)
-INSERT INTO sales (customer_id, user_id, subtotal, discount_amount, tax_amount, total_amount, payment_method, status, sale_date) VALUES
-(NULL, 'b2eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', 3850.00, 0.00, 0.00, 3850.00, 'efectivo', 'completada', CURRENT_DATE - INTERVAL '1 day');
+INSERT INTO sales (sale_number, customer_id, user_id, subtotal, discount_amount, tax_amount, total_amount, payment_method, status, sale_date) VALUES
+('VTA-2026-90008', NULL, 'b2eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', 3850.00, 0.00, 0.00, 3850.00, 'efectivo', 'completada', CURRENT_DATE - INTERVAL '1 day');
 
 INSERT INTO sale_items (sale_id, product_id, quantity, unit, unit_price, subtotal) VALUES
 ((SELECT id FROM sales WHERE sale_date = CURRENT_DATE - INTERVAL '1 day' AND total_amount = 3850.00 LIMIT 1), '40000000-0000-0000-0000-000000000001', 3.000, 'unidad', 850.00, 2550.00),
