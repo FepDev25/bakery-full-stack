@@ -10,6 +10,7 @@ from src.models.enums import SaleStatus
 from src.models.sale import Sale
 from src.repositories.base import BaseRepository
 
+
 class SaleRepository(BaseRepository[Sale]):
     def __init__(self, session: AsyncSession) -> None:
         super().__init__(Sale, session)
@@ -90,7 +91,6 @@ class SaleRepository(BaseRepository[Sale]):
         customer_id: UUID | None = None,
         notes: str | None = None,
     ) -> Sale:
-        from datetime import datetime, timezone
         sale = Sale(
             user_id=user_id,
             customer_id=customer_id,
@@ -101,7 +101,6 @@ class SaleRepository(BaseRepository[Sale]):
             total_amount=total_amount,
             payment_method=payment_method,
             status=SaleStatus.COMPLETADA,
-            sale_date=datetime.now(timezone.utc),
             notes=notes,
         )
         self.session.add(sale)
