@@ -23,5 +23,7 @@ lerna-debug.log*
 
 panaderia_web/node_modules
 panaderia_web/dist
+panaderia_web/playwright-report/
+panaderia_web/test-results/
 dist-ssr
 *.local
