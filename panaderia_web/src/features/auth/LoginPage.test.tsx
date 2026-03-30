@@ -1,5 +1,4 @@
 import { http, HttpResponse } from 'msw'
-import { Routes, Route } from 'react-router-dom'
 import LoginPage from './LoginPage'
 import { server } from '@/test/msw/server'
 import { mockTokens, mockUsers } from '@/test/msw/fixtures'

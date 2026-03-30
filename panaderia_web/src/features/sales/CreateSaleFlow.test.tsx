@@ -2,7 +2,7 @@ import { http, HttpResponse } from 'msw'
 import { toast } from 'sonner'
 import CreateSaleFlow from './CreateSaleFlow'
 import { server } from '@/test/msw/server'
-import { mockProducts, mockCustomers, mockSaleWithItems } from '@/test/msw/fixtures'
+import { mockProducts, mockSaleWithItems } from '@/test/msw/fixtures'
 import { render, screen, waitFor, setupUser, setAuthUser, within } from '@/test/utils'
 
 const BASE = 'http://localhost:8000'
