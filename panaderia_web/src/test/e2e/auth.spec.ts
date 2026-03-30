@@ -11,10 +11,12 @@ test.describe('Autenticación', () => {
 
   test('login fallido → mensaje de error visible', async ({ page }) => {
     await page.goto('/login')
-    await page.fill('[name=email]', 'no-existe@fake.com')
+    await page.fill('[name=email]', 'noexiste@panaderia.com')
     await page.fill('[name=password]', 'password-erronea')
+
     await page.click('button[type=submit]')
 
+    // El componente muestra el error del servidor
     await expect(page.getByText('Email o contraseña incorrectos.')).toBeVisible()
     await expect(page).toHaveURL('/login')
   })

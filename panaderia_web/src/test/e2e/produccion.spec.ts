@@ -19,9 +19,19 @@ test.describe.serial('Producción — ciclo de vida de lotes', () => {
   test('crea lote con receta → ingredientes calculados correctamente', async ({ page }) => {
     await page.goto('/app/produccion/nuevo')
 
-    // Seleccionar producto Baguette (tiene receta configurada)
+    // Esperar que la API de productos cargue antes de abrir el Select
+    await page.waitForResponse((r) => r.url().includes('/api/v1/products') && r.status() === 200, {
+      timeout: 15000,
+    })
+
+    // Abrir el Select y esperar opciones del listbox
     await page.getByRole('combobox').click()
-    await page.getByRole('option', { name: 'Baguette' }).click()
+    await expect(page.getByRole('listbox').getByRole('option').first()).toBeVisible({
+      timeout: 5000,
+    })
+
+    // Seleccionar Baguette (tiene receta configurada)
+    await page.getByRole('listbox').getByRole('option', { name: 'Baguette' }).click()
 
     // Esperar a que carguen los ingredientes de la receta
     await expect(page.getByText('Harina 000')).toBeVisible({ timeout: 5000 })
@@ -76,12 +86,21 @@ test.describe.serial('Producción — ciclo de vida de lotes', () => {
     await expect(page.getByText(/ya no puede modificarse/i)).toBeVisible()
   })
 
-  test('descartar lote → stock NO aumenta pero ingredientes se consumen (RN-008)', async ({ page }) => {
+  test('descartar lote → stock NO aumenta pero ingredientes se consumen (RN-008)', async ({
+    page,
+  }) => {
     // Crear un nuevo lote para poder descartarlo
     await page.goto('/app/produccion/nuevo')
 
+    await page.waitForResponse((r) => r.url().includes('/api/v1/products') && r.status() === 200, {
+      timeout: 15000,
+    })
+
     await page.getByRole('combobox').click()
-    await page.getByRole('option', { name: 'Pan Francés' }).click()
+    await expect(page.getByRole('listbox').getByRole('option').first()).toBeVisible({
+      timeout: 5000,
+    })
+    await page.getByRole('listbox').getByRole('option', { name: 'Pan Francés' }).click()
 
     await expect(page.getByText('Harina 000')).toBeVisible({ timeout: 5000 })
 

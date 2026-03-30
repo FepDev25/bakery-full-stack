@@ -11,26 +11,37 @@ import { loginAs } from './fixtures/auth'
 
 // Stock inicial de Baguette, capturado en el primer test y reutilizado en los siguientes
 let stockAntesDeLaVenta = 0
+const PRODUCT_NAME = 'Pan de Miga'
+
+/** Navega a nueva venta y espera que la API de productos responda con 200. */
+async function goToNuevaVenta(page: Parameters<typeof loginAs>[0]) {
+  await page.goto('/app/ventas/nueva')
+  await page.waitForResponse((r) => r.url().includes('/api/v1/products') && r.status() === 200, {
+    timeout: 15000,
+  })
+}
 
 test.describe.serial('Ventas — flujo completo', () => {
   test.beforeEach(async ({ page }) => {
     await loginAs(page, 'cajero')
   })
 
-  test('cajero crea venta completa: producto → cierre → confirma → toast éxito', async ({ page }) => {
-    await page.goto('/app/ventas/nueva')
+  test('cajero crea venta completa: producto → cierre → confirma → toast éxito', async ({
+    page,
+  }) => {
+    await goToNuevaVenta(page)
 
-    // Esperar que carguen los productos
-    const baguetteCard = page.locator('.bg-card').filter({ hasText: 'Baguette' }).first()
-    await expect(baguetteCard).toBeVisible()
+    // Esperar a que el card del producto de prueba esté en el DOM
+    const productCard = page.locator('.bg-card').filter({ hasText: PRODUCT_NAME }).first()
+    await expect(productCard).toBeVisible({ timeout: 5000 })
 
     // Capturar el stock actual antes de la venta
-    const stockText = await baguetteCard.getByText(/Stock:/).textContent()
+    const stockText = await productCard.getByText(/Stock:/).textContent()
     stockAntesDeLaVenta = parseInt(stockText?.match(/Stock:\s*(\d+)/)?.[1] ?? '0')
     expect(stockAntesDeLaVenta).toBeGreaterThan(0)
 
-    // Agregar 1 Baguette al carrito (botón + es el último botón del card)
-    await baguetteCard.getByRole('button').last().click()
+    // Agregar 1 unidad al carrito (botón + es el último botón del card)
+    await productCard.getByRole('button').last().click()
 
     // El botón "Continuar" debe habilitarse
     const continueBtn = page.getByRole('button', { name: /continuar/i })
@@ -51,23 +62,32 @@ test.describe.serial('Ventas — flujo completo', () => {
   })
 
   test('el stock del producto se reduce después de la venta', async ({ page }) => {
-    // Verificar en la pantalla de nueva venta que el stock bajó 1
-    await page.goto('/app/ventas/nueva')
+    await goToNuevaVenta(page)
 
-    const baguetteCard = page.locator('.bg-card').filter({ hasText: 'Baguette' }).first()
-    await expect(baguetteCard).toBeVisible()
+    const productCard = page.locator('.bg-card').filter({ hasText: PRODUCT_NAME }).first()
+    await expect(productCard).toBeVisible({ timeout: 5000 })
 
-    const stockText = await baguetteCard.getByText(/Stock:/).textContent()
+    const stockText = await productCard.getByText(/Stock:/).textContent()
     const stockActual = parseInt(stockText?.match(/Stock:\s*(\d+)/)?.[1] ?? '0')
 
     expect(stockActual).toBe(stockAntesDeLaVenta - 1)
   })
 
-  test('cancelar venta → ConfirmDialog → confirmar → estado cambia a "cancelada"', async ({ page }) => {
+  test('cancelar venta → ConfirmDialog → confirmar → estado cambia a "cancelada"', async ({
+    page,
+  }) => {
     await page.goto('/app/ventas')
 
+    // Esperar que cargue el listado
+    await page.waitForResponse((r) => r.url().includes('/api/v1/sales') && r.status() === 200, {
+      timeout: 10000,
+    })
+
     // La venta más reciente debería estar al tope de la lista
-    await page.getByRole('button', { name: /ver detalle/i }).first().click()
+    await page
+      .getByRole('button', { name: /ver detalle/i })
+      .first()
+      .click()
 
     // El Sheet de detalle debe abrirse
     await expect(page.getByRole('dialog')).toBeVisible()
@@ -88,12 +108,12 @@ test.describe.serial('Ventas — flujo completo', () => {
   })
 
   test('cancelar venta revierte el stock al valor original', async ({ page }) => {
-    await page.goto('/app/ventas/nueva')
+    await goToNuevaVenta(page)
 
-    const baguetteCard = page.locator('.bg-card').filter({ hasText: 'Baguette' }).first()
-    await expect(baguetteCard).toBeVisible()
+    const productCard = page.locator('.bg-card').filter({ hasText: PRODUCT_NAME }).first()
+    await expect(productCard).toBeVisible({ timeout: 5000 })
 
-    const stockText = await baguetteCard.getByText(/Stock:/).textContent()
+    const stockText = await productCard.getByText(/Stock:/).textContent()
     const stockDespues = parseInt(stockText?.match(/Stock:\s*(\d+)/)?.[1] ?? '0')
 
     // El stock debe haber vuelto al valor original (cancelar revierte — RN-006)
