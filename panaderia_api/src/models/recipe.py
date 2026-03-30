@@ -9,12 +9,20 @@ if TYPE_CHECKING:
     from src.models.ingredient import Ingredient
 import uuid
 
-from sqlalchemy import DateTime, Enum as SAEnum, ForeignKey, Numeric, UniqueConstraint, func
+from sqlalchemy import (
+    DateTime,
+    Enum as SAEnum,
+    ForeignKey,
+    Numeric,
+    UniqueConstraint,
+    func,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.database import Base
 from src.models.enums import IngredientUnit
+
 
 class Recipe(Base):
     __tablename__ = "recipes"
@@ -31,12 +39,20 @@ class Recipe(Base):
     )
     quantity: Mapped[Decimal] = mapped_column(Numeric(10, 3), nullable=False)
     unit: Mapped[IngredientUnit] = mapped_column(
-        SAEnum(IngredientUnit, name="ingredient_unit", values_callable=lambda objs: [e.value for e in objs], create_type=False),
-        nullable=False
+        SAEnum(
+            IngredientUnit,
+            name="ingredient_unit",
+            values_callable=lambda objs: [e.value for e in objs],
+            create_type=False,
+            native_enum=False,
+        ),
+        nullable=False,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
 
     product: Mapped["Product"] = relationship("Product", back_populates="recipes")
-    ingredient: Mapped["Ingredient"] = relationship("Ingredient", back_populates="recipes")
+    ingredient: Mapped["Ingredient"] = relationship(
+        "Ingredient", back_populates="recipes"
+    )

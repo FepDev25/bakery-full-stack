@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from src.models.sale import Sale
     from src.models.production_batch import ProductionBatch
@@ -18,6 +19,7 @@ from src.core.database import Base
 from src.models.mixins import TimestampMixin
 from src.models.enums import Role
 
+
 class User(Base, TimestampMixin):
     __tablename__ = "users"
 
@@ -28,15 +30,27 @@ class User(Base, TimestampMixin):
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     full_name: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[Role] = mapped_column(
-        SAEnum(Role, name="user_role", values_callable=lambda objs: [e.value for e in objs], create_type=False),
+        SAEnum(
+            Role,
+            name="user_role",
+            values_callable=lambda objs: [e.value for e in objs],
+            create_type=False,
+            native_enum=False,
+        ),
         nullable=False,
-        default=Role.CAJERO
+        default=Role.CAJERO,
     )
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
-    last_login: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_login: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
     # relationships
     sales: Mapped[list["Sale"]] = relationship("Sale", back_populates="user")
-    production_batches: Mapped[list["ProductionBatch"]] = relationship("ProductionBatch", back_populates="user")
-    ingredient_purchases: Mapped[list["IngredientPurchase"]] = relationship("IngredientPurchase", back_populates="user")
+    production_batches: Mapped[list["ProductionBatch"]] = relationship(
+        "ProductionBatch", back_populates="user"
+    )
+    ingredient_purchases: Mapped[list["IngredientPurchase"]] = relationship(
+        "IngredientPurchase", back_populates="user"
+    )
     expenses: Mapped[list["Expense"]] = relationship("Expense", back_populates="user")

@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from src.models.category import Category
     from src.models.recipe import Recipe
@@ -19,6 +20,7 @@ from src.core.database import Base
 from src.models.mixins import TimestampMixin
 from src.models.enums import ProductUnit
 
+
 class Product(Base, TimestampMixin):
     __tablename__ = "products"
     __table_args__ = (UniqueConstraint("name", "category_id"),)
@@ -33,16 +35,30 @@ class Product(Base, TimestampMixin):
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     price: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     unit: Mapped[ProductUnit] = mapped_column(
-        SAEnum(ProductUnit, name="product_unit", values_callable=lambda objs: [e.value for e in objs], create_type=False),
+        SAEnum(
+            ProductUnit,
+            name="product_unit",
+            values_callable=lambda objs: [e.value for e in objs],
+            create_type=False,
+            native_enum=False,
+        ),
         nullable=False,
-        default=ProductUnit.UNIDAD
+        default=ProductUnit.UNIDAD,
     )
-    stock_quantity: Mapped[Decimal] = mapped_column(Numeric(10, 3), nullable=False, default=Decimal("0.000"))
-    min_stock_alert: Mapped[Decimal] = mapped_column(Numeric(10, 3), nullable=False, default=Decimal("0.000"))
+    stock_quantity: Mapped[Decimal] = mapped_column(
+        Numeric(10, 3), nullable=False, default=Decimal("0.000")
+    )
+    min_stock_alert: Mapped[Decimal] = mapped_column(
+        Numeric(10, 3), nullable=False, default=Decimal("0.000")
+    )
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     # relationships
     category: Mapped["Category"] = relationship("Category", back_populates="products")
     recipes: Mapped[list["Recipe"]] = relationship("Recipe", back_populates="product")
-    sale_items: Mapped[list["SaleItem"]] = relationship("SaleItem", back_populates="product")
-    production_batches: Mapped[list["ProductionBatch"]] = relationship("ProductionBatch", back_populates="product")
+    sale_items: Mapped[list["SaleItem"]] = relationship(
+        "SaleItem", back_populates="product"
+    )
+    production_batches: Mapped[list["ProductionBatch"]] = relationship(
+        "ProductionBatch", back_populates="product"
+    )

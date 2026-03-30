@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from src.models.customer import Customer
     from src.models.user import User
@@ -17,6 +18,7 @@ from sqlalchemy import Enum as SAEnum
 from src.core.database import Base
 from src.models.enums import PaymentMethod, SaleStatus
 
+
 class Sale(Base):
     __tablename__ = "sales"
 
@@ -31,20 +33,38 @@ class Sale(Base):
     )
     sale_number: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     subtotal: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
-    discount_amount: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False, default=0)
-    tax_amount: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False, default=0)
+    discount_amount: Mapped[Decimal] = mapped_column(
+        Numeric(10, 2), nullable=False, default=0
+    )
+    tax_amount: Mapped[Decimal] = mapped_column(
+        Numeric(10, 2), nullable=False, default=0
+    )
     total_amount: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     payment_method: Mapped[PaymentMethod] = mapped_column(
-        SAEnum(PaymentMethod, name="payment_method", values_callable=lambda objs: [e.value for e in objs], create_type=False),
+        SAEnum(
+            PaymentMethod,
+            name="payment_method",
+            values_callable=lambda objs: [e.value for e in objs],
+            create_type=False,
+            native_enum=False,
+        ),
         nullable=False,
-        default=PaymentMethod.EFECTIVO
+        default=PaymentMethod.EFECTIVO,
     )
     status: Mapped[SaleStatus] = mapped_column(
-        SAEnum(SaleStatus, name="sale_status", values_callable=lambda objs: [e.value for e in objs], create_type=False),
+        SAEnum(
+            SaleStatus,
+            name="sale_status",
+            values_callable=lambda objs: [e.value for e in objs],
+            create_type=False,
+            native_enum=False,
+        ),
         nullable=False,
-        default=SaleStatus.COMPLETADA
+        default=SaleStatus.COMPLETADA,
     )
-    sale_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    sale_date: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()

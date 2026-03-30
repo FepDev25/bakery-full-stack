@@ -1,9 +1,10 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from src.models.recipe import Recipe
     from src.models.ingredient_purchase import IngredientPurchase
-    
+
 from src.models.mixins import TimestampMixin
 from src.core.database import Base
 from src.models.enums import IngredientUnit
@@ -15,6 +16,8 @@ from sqlalchemy import String, Numeric, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy import Enum as SAEnum
+
+
 class Ingredient(Base, TimestampMixin):
     __tablename__ = "ingredients"
 
@@ -23,15 +26,31 @@ class Ingredient(Base, TimestampMixin):
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
     unit: Mapped[IngredientUnit] = mapped_column(
-        SAEnum(IngredientUnit, name="ingredient_unit", values_callable=lambda objs: [e.value for e in objs], create_type=False),
+        SAEnum(
+            IngredientUnit,
+            name="ingredient_unit",
+            values_callable=lambda objs: [e.value for e in objs],
+            create_type=False,
+            native_enum=False,
+        ),
         nullable=False,
-        default=IngredientUnit.KG
+        default=IngredientUnit.KG,
     )
-    stock_quantity: Mapped[Decimal] = mapped_column(Numeric(10, 3), nullable=False, default=Decimal("0.000"))
-    min_stock_alert: Mapped[Decimal] = mapped_column(Numeric(10, 3), nullable=False, default=Decimal("0.000"))
-    unit_cost: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False, default=Decimal("0.00"))
+    stock_quantity: Mapped[Decimal] = mapped_column(
+        Numeric(10, 3), nullable=False, default=Decimal("0.000")
+    )
+    min_stock_alert: Mapped[Decimal] = mapped_column(
+        Numeric(10, 3), nullable=False, default=Decimal("0.000")
+    )
+    unit_cost: Mapped[Decimal] = mapped_column(
+        Numeric(10, 2), nullable=False, default=Decimal("0.00")
+    )
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     # relationships
-    recipes: Mapped[list["Recipe"]] = relationship("Recipe", back_populates="ingredient")
-    ingredient_purchases: Mapped[list["IngredientPurchase"]] = relationship("IngredientPurchase", back_populates="ingredient")
+    recipes: Mapped[list["Recipe"]] = relationship(
+        "Recipe", back_populates="ingredient"
+    )
+    ingredient_purchases: Mapped[list["IngredientPurchase"]] = relationship(
+        "IngredientPurchase", back_populates="ingredient"
+    )
