@@ -98,14 +98,18 @@ async def test_user(db_session):
 @pytest_asyncio.fixture
 async def http_client():
     """Cliente HTTP asíncrono que usa el ASGI transport (sin red real)."""
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as client:
         yield client
 
 
 # ── Factories ─────────────────────────────────────────────────────────────────
 
 
-async def _create_user(session: AsyncSession, role: Role = Role.ADMIN, email: str | None = None) -> User:
+async def _create_user(
+    session: AsyncSession, role: Role = Role.ADMIN, email: str | None = None
+) -> User:
     user = User(
         email=email or f"user_{uuid.uuid4().hex[:8]}@test.com",
         password_hash=hash_password("test_pass_123"),
@@ -183,6 +187,7 @@ async def create_recipe(
 async def create_customer(session: AsyncSession, name: str | None = None) -> Customer:
     c = Customer(
         name=name or f"Cliente {uuid.uuid4().hex[:8]}",
+        phone=f"099{uuid.uuid4().hex[:7]}",
         loyalty_points=0,
         is_active=True,
     )
