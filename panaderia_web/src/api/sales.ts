@@ -81,6 +81,6 @@ export async function createSale(body: SaleCreate) {
 }
 
 export async function cancelSale(id: string) {
-  const { data } = await apiClient.post<SaleResponse>(`/api/v1/sales/${id}/cancel`)
+  const { data } = await apiClient.post<SaleResponse>(`/api/v1/sales/${id}/cancel`, {})
   return data
 }
