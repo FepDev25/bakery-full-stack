@@ -48,7 +48,10 @@ VALID_PAYLOAD = {
 
 # ── GET /recipes/product/{product_id} ─────────────────────────────────────────
 
-def test_list_recipes_by_product_returns_200(client: TestClient, mock_service: AsyncMock) -> None:
+
+def test_list_recipes_by_product_returns_200(
+    client: TestClient, mock_service: AsyncMock
+) -> None:
     mock_service.get_by_product.return_value = [make_recipe(), make_recipe()]
 
     response = client.get(f"/api/v1/recipes/product/{PRODUCT_ID}")
@@ -61,7 +64,10 @@ def test_list_recipes_product_not_found_returns_404(
     client: TestClient, mock_service: AsyncMock
 ) -> None:
     from src.core.exceptions import NotFoundException
-    mock_service.get_by_product.side_effect = NotFoundException("Producto no encontrado o inactivo")
+
+    mock_service.get_by_product.side_effect = NotFoundException(
+        "Producto no encontrado o inactivo"
+    )
 
     response = client.get(f"/api/v1/recipes/product/{uuid.uuid4()}")
 
@@ -70,7 +76,10 @@ def test_list_recipes_product_not_found_returns_404(
 
 # ── GET /recipes/product/{product_id}/cost ────────────────────────────────────
 
-def test_get_production_cost_returns_200(client: TestClient, mock_service: AsyncMock) -> None:
+
+def test_get_production_cost_returns_200(
+    client: TestClient, mock_service: AsyncMock
+) -> None:
     mock_service.get_unit_production_cost.return_value = ProductionCostResponse(
         product_id=PRODUCT_ID,
         cost_per_unit=Decimal("3.75"),
@@ -81,7 +90,7 @@ def test_get_production_cost_returns_200(client: TestClient, mock_service: Async
 
     assert response.status_code == 200
     body = response.json()
-    assert body["cost_per_unit"] == "3.75"
+    assert body["cost_per_unit"] == 3.75
     assert body["recipe_count"] == 3
 
 
@@ -89,6 +98,7 @@ def test_get_production_cost_no_product_returns_404(
     client: TestClient, mock_service: AsyncMock
 ) -> None:
     from src.core.exceptions import NotFoundException
+
     mock_service.get_unit_production_cost.side_effect = NotFoundException(
         "Producto no encontrado o inactivo"
     )
@@ -100,6 +110,7 @@ def test_get_production_cost_no_product_returns_404(
 
 # ── GET /recipes/{id} ─────────────────────────────────────────────────────────
 
+
 def test_get_recipe_returns_200(client: TestClient, mock_service: AsyncMock) -> None:
     recipe = make_recipe()
     mock_service.get_by_id.return_value = recipe
@@ -110,8 +121,11 @@ def test_get_recipe_returns_200(client: TestClient, mock_service: AsyncMock) -> 
     assert response.json()["unit"] == "kg"
 
 
-def test_get_recipe_not_found_returns_404(client: TestClient, mock_service: AsyncMock) -> None:
+def test_get_recipe_not_found_returns_404(
+    client: TestClient, mock_service: AsyncMock
+) -> None:
     from src.core.exceptions import NotFoundException
+
     mock_service.get_by_id.side_effect = NotFoundException("Receta no encontrada")
 
     response = client.get(f"/api/v1/recipes/{uuid.uuid4()}")
@@ -120,6 +134,7 @@ def test_get_recipe_not_found_returns_404(client: TestClient, mock_service: Asyn
 
 
 # ── POST /recipes ─────────────────────────────────────────────────────────────
+
 
 def test_create_recipe_returns_201(client: TestClient, mock_service: AsyncMock) -> None:
     recipe = make_recipe()
@@ -135,6 +150,7 @@ def test_create_recipe_duplicate_ingredient_returns_409(
     client: TestClient, mock_service: AsyncMock
 ) -> None:
     from src.core.exceptions import DuplicateEntityError
+
     mock_service.create.side_effect = DuplicateEntityError(
         "El ingrediente 'Harina' ya está en la receta"
     )
@@ -149,7 +165,10 @@ def test_create_recipe_product_not_found_returns_404(
     client: TestClient, mock_service: AsyncMock
 ) -> None:
     from src.core.exceptions import NotFoundException
-    mock_service.create.side_effect = NotFoundException("Producto no encontrado o inactivo")
+
+    mock_service.create.side_effect = NotFoundException(
+        "Producto no encontrado o inactivo"
+    )
 
     response = client.post("/api/v1/recipes", json=VALID_PAYLOAD)
 
@@ -160,7 +179,10 @@ def test_create_recipe_ingredient_not_found_returns_404(
     client: TestClient, mock_service: AsyncMock
 ) -> None:
     from src.core.exceptions import NotFoundException
-    mock_service.create.side_effect = NotFoundException("Ingrediente no encontrado o inactivo")
+
+    mock_service.create.side_effect = NotFoundException(
+        "Ingrediente no encontrado o inactivo"
+    )
 
     response = client.post("/api/v1/recipes", json=VALID_PAYLOAD)
 
@@ -180,6 +202,7 @@ def test_create_recipe_invalid_quantity_returns_422(
 
 # ── PATCH /recipes/{id} ───────────────────────────────────────────────────────
 
+
 def test_update_recipe_returns_200(client: TestClient, mock_service: AsyncMock) -> None:
     recipe = make_recipe(quantity=Decimal("1.000"))
     mock_service.update.return_value = recipe
@@ -192,6 +215,7 @@ def test_update_recipe_returns_200(client: TestClient, mock_service: AsyncMock) 
 
 # ── DELETE /recipes/{id} ──────────────────────────────────────────────────────
 
+
 def test_delete_recipe_returns_204(client: TestClient, mock_service: AsyncMock) -> None:
     recipe_id = uuid.uuid4()
     mock_service.delete.return_value = None
@@ -201,8 +225,11 @@ def test_delete_recipe_returns_204(client: TestClient, mock_service: AsyncMock) 
     assert response.status_code == 204
 
 
-def test_delete_recipe_not_found_returns_404(client: TestClient, mock_service: AsyncMock) -> None:
+def test_delete_recipe_not_found_returns_404(
+    client: TestClient, mock_service: AsyncMock
+) -> None:
     from src.core.exceptions import NotFoundException
+
     mock_service.delete.side_effect = NotFoundException("Receta no encontrada")
 
     response = client.delete(f"/api/v1/recipes/{uuid.uuid4()}")
@@ -212,7 +239,10 @@ def test_delete_recipe_not_found_returns_404(client: TestClient, mock_service: A
 
 # ── RBAC ──────────────────────────────────────────────────────────────────────
 
-def test_cajero_cannot_create_recipe(client: TestClient, mock_service: AsyncMock) -> None:
+
+def test_cajero_cannot_create_recipe(
+    client: TestClient, mock_service: AsyncMock
+) -> None:
     from src.core.dependencies import get_current_user
     from src.models.enums import Role
     from src.models.user import User

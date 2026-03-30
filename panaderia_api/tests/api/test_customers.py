@@ -46,8 +46,14 @@ VALID_PAYLOAD = {"name": "Juan Pérez", "phone": "099111222"}
 
 # ── GET /customers ────────────────────────────────────────────────────────────
 
-def test_list_customers_returns_200(client: TestClient, mock_service: AsyncMock) -> None:
-    mock_service.get_all.return_value = [make_customer(), make_customer(name="Ana García")]
+
+def test_list_customers_returns_200(
+    client: TestClient, mock_service: AsyncMock
+) -> None:
+    mock_service.get_all.return_value = [
+        make_customer(),
+        make_customer(name="Ana García"),
+    ]
     mock_service.count_all.return_value = 2
 
     response = client.get("/api/v1/customers")
@@ -69,6 +75,7 @@ def test_get_customer_ok(client: TestClient, mock_service: AsyncMock) -> None:
 
 def test_get_customer_not_found(client: TestClient, mock_service: AsyncMock) -> None:
     from src.core.exceptions import NotFoundException
+
     mock_service.get_by_id.side_effect = NotFoundException("Cliente no encontrado")
 
     response = client.get(f"/api/v1/customers/{uuid.uuid4()}")
@@ -78,6 +85,7 @@ def test_get_customer_not_found(client: TestClient, mock_service: AsyncMock) -> 
 
 # ── POST /customers ───────────────────────────────────────────────────────────
 
+
 def test_create_customer_ok(client: TestClient, mock_service: AsyncMock) -> None:
     mock_service.create.return_value = make_customer()
 
@@ -86,16 +94,23 @@ def test_create_customer_ok(client: TestClient, mock_service: AsyncMock) -> None
     assert response.status_code == 201
 
 
-def test_create_customer_requires_contact(client: TestClient, mock_service: AsyncMock) -> None:
+def test_create_customer_requires_contact(
+    client: TestClient, mock_service: AsyncMock
+) -> None:
     response = client.post("/api/v1/customers", json={"name": "Sin contacto"})
 
     assert response.status_code == 422
     mock_service.create.assert_not_called()
 
 
-def test_create_customer_duplicate_phone(client: TestClient, mock_service: AsyncMock) -> None:
+def test_create_customer_duplicate_phone(
+    client: TestClient, mock_service: AsyncMock
+) -> None:
     from src.core.exceptions import DuplicateEntityError
-    mock_service.create.side_effect = DuplicateEntityError("Ya existe un cliente con ese teléfono")
+
+    mock_service.create.side_effect = DuplicateEntityError(
+        "Ya existe un cliente con ese teléfono"
+    )
 
     response = client.post("/api/v1/customers", json=VALID_PAYLOAD)
 
@@ -104,6 +119,7 @@ def test_create_customer_duplicate_phone(client: TestClient, mock_service: Async
 
 
 # ── POST /customers/{id}/redeem-points — RN-009 ───────────────────────────────
+
 
 def test_redeem_points_ok(client: TestClient, mock_service: AsyncMock) -> None:
     customer_id = uuid.uuid4()
@@ -118,12 +134,15 @@ def test_redeem_points_ok(client: TestClient, mock_service: AsyncMock) -> None:
     )
 
     assert response.status_code == 200
-    assert response.json()["discount_amount"] == "10.00"
+    assert response.json()["discount_amount"] == 10.0
     assert response.json()["remaining_points"] == 0
 
 
-def test_redeem_points_insufficient(client: TestClient, mock_service: AsyncMock) -> None:
+def test_redeem_points_insufficient(
+    client: TestClient, mock_service: AsyncMock
+) -> None:
     from src.core.exceptions import ValidationError
+
     mock_service.redeem_points.side_effect = ValidationError(
         "Puntos insuficientes: el cliente tiene 50, se intentan canjear 100"
     )
@@ -137,7 +156,9 @@ def test_redeem_points_insufficient(client: TestClient, mock_service: AsyncMock)
     assert response.json()["error"] == "ValidationError"
 
 
-def test_redeem_points_invalid_zero(client: TestClient, mock_service: AsyncMock) -> None:
+def test_redeem_points_invalid_zero(
+    client: TestClient, mock_service: AsyncMock
+) -> None:
     # points debe ser > 0 — Pydantic rechaza
     response = client.post(
         f"/api/v1/customers/{uuid.uuid4()}/redeem-points",
@@ -150,7 +171,10 @@ def test_redeem_points_invalid_zero(client: TestClient, mock_service: AsyncMock)
 
 # ── DELETE /customers ─────────────────────────────────────────────────────────
 
-def test_delete_customer_requires_admin(client: TestClient, mock_service: AsyncMock) -> None:
+
+def test_delete_customer_requires_admin(
+    client: TestClient, mock_service: AsyncMock
+) -> None:
     cajero = User()
     cajero.id = uuid.uuid4()
     cajero.role = Role.CAJERO
@@ -162,6 +186,7 @@ def test_delete_customer_requires_admin(client: TestClient, mock_service: AsyncM
     assert response.status_code == 403
 
     from tests.conftest import make_admin_user
+
     app.dependency_overrides[get_current_user] = lambda: make_admin_user()
 
 

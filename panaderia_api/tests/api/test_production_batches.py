@@ -50,6 +50,7 @@ VALID_PAYLOAD = {
 
 # ── GET /production-batches ───────────────────────────────────────────────────
 
+
 def test_list_batches_returns_200(client: TestClient, mock_service: AsyncMock) -> None:
     mock_service.get_all.return_value = [make_batch(), make_batch()]
     mock_service.count_all.return_value = 2
@@ -72,6 +73,7 @@ def test_get_batch_returns_200(client: TestClient, mock_service: AsyncMock) -> N
 
 def test_get_batch_not_found(client: TestClient, mock_service: AsyncMock) -> None:
     from src.core.exceptions import NotFoundException
+
     mock_service.get_by_id.side_effect = NotFoundException("Lote no encontrado")
 
     response = client.get(f"/api/v1/production-batches/{uuid.uuid4()}")
@@ -80,6 +82,7 @@ def test_get_batch_not_found(client: TestClient, mock_service: AsyncMock) -> Non
 
 
 # ── POST /production-batches ──────────────────────────────────────────────────
+
 
 def test_create_batch_returns_201(client: TestClient, mock_service: AsyncMock) -> None:
     batch = make_batch()
@@ -96,15 +99,21 @@ def test_create_batch_product_not_found_returns_404(
     client: TestClient, mock_service: AsyncMock
 ) -> None:
     from src.core.exceptions import NotFoundException
-    mock_service.create_batch.side_effect = NotFoundException("Producto no encontrado o inactivo")
+
+    mock_service.create_batch.side_effect = NotFoundException(
+        "Producto no encontrado o inactivo"
+    )
 
     response = client.post("/api/v1/production-batches", json=VALID_PAYLOAD)
 
     assert response.status_code == 404
 
 
-def test_create_batch_no_recipe_returns_400(client: TestClient, mock_service: AsyncMock) -> None:
+def test_create_batch_no_recipe_returns_400(
+    client: TestClient, mock_service: AsyncMock
+) -> None:
     from src.core.exceptions import ValidationError
+
     mock_service.create_batch.side_effect = ValidationError(
         "El producto 'Baguette' no tiene receta definida."
     )
@@ -115,7 +124,9 @@ def test_create_batch_no_recipe_returns_400(client: TestClient, mock_service: As
     assert response.json()["error"] == "ValidationError"
 
 
-def test_create_batch_invalid_quantity_returns_422(client: TestClient, mock_service: AsyncMock) -> None:
+def test_create_batch_invalid_quantity_returns_422(
+    client: TestClient, mock_service: AsyncMock
+) -> None:
     payload = {**VALID_PAYLOAD, "quantity_produced": "-1.000"}
 
     response = client.post("/api/v1/production-batches", json=payload)
@@ -126,7 +137,10 @@ def test_create_batch_invalid_quantity_returns_422(client: TestClient, mock_serv
 
 # ── POST /production-batches/{id}/complete ────────────────────────────────────
 
-def test_complete_batch_returns_200(client: TestClient, mock_service: AsyncMock) -> None:
+
+def test_complete_batch_returns_200(
+    client: TestClient, mock_service: AsyncMock
+) -> None:
     completed = make_batch(
         status=ProductionBatchStatus.COMPLETADO,
         ingredient_cost=Decimal("150.00"),
@@ -137,13 +151,14 @@ def test_complete_batch_returns_200(client: TestClient, mock_service: AsyncMock)
 
     assert response.status_code == 200
     assert response.json()["status"] == "completado"
-    assert response.json()["ingredient_cost"] == "150.00"
+    assert response.json()["ingredient_cost"] == 150.0
 
 
 def test_complete_batch_insufficient_stock_returns_400(
     client: TestClient, mock_service: AsyncMock
 ) -> None:
     from src.core.exceptions import InsufficientStockError
+
     mock_service.complete_batch.side_effect = InsufficientStockError(
         "Ingredientes insuficientes: 'Harina': disponible 1.000, requerido 5.000"
     )
@@ -154,8 +169,11 @@ def test_complete_batch_insufficient_stock_returns_400(
     assert response.json()["error"] == "InsufficientStockError"
 
 
-def test_complete_already_completed_returns_400(client: TestClient, mock_service: AsyncMock) -> None:
+def test_complete_already_completed_returns_400(
+    client: TestClient, mock_service: AsyncMock
+) -> None:
     from src.core.exceptions import ValidationError
+
     mock_service.complete_batch.side_effect = ValidationError(
         "No se puede completar un lote con estado 'completado'"
     )
@@ -166,6 +184,7 @@ def test_complete_already_completed_returns_400(client: TestClient, mock_service
 
 
 # ── POST /production-batches/{id}/discard ─────────────────────────────────────
+
 
 def test_discard_batch_returns_200(client: TestClient, mock_service: AsyncMock) -> None:
     discarded = make_batch(
@@ -184,6 +203,7 @@ def test_discard_batch_insufficient_stock_returns_400(
     client: TestClient, mock_service: AsyncMock
 ) -> None:
     from src.core.exceptions import InsufficientStockError
+
     mock_service.discard_batch.side_effect = InsufficientStockError(
         "Ingredientes insuficientes"
     )
@@ -195,7 +215,10 @@ def test_discard_batch_insufficient_stock_returns_400(
 
 # ── RBAC ──────────────────────────────────────────────────────────────────────
 
-def test_cajero_cannot_create_batch(client: TestClient, mock_service: AsyncMock) -> None:
+
+def test_cajero_cannot_create_batch(
+    client: TestClient, mock_service: AsyncMock
+) -> None:
     from src.core.dependencies import get_current_user
     from src.models.enums import Role
     from src.models.user import User

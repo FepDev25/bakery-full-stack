@@ -54,7 +54,10 @@ VALID_PAYLOAD = {
 
 # ── GET /ingredient-purchases ─────────────────────────────────────────────────
 
-def test_list_purchases_returns_200(client: TestClient, mock_service: AsyncMock) -> None:
+
+def test_list_purchases_returns_200(
+    client: TestClient, mock_service: AsyncMock
+) -> None:
     mock_service.get_all.return_value = [make_purchase(), make_purchase()]
     mock_service.count_all.return_value = 2
 
@@ -64,7 +67,9 @@ def test_list_purchases_returns_200(client: TestClient, mock_service: AsyncMock)
     assert len(response.json()["items"]) == 2
 
 
-def test_list_by_supplier_returns_200(client: TestClient, mock_service: AsyncMock) -> None:
+def test_list_by_supplier_returns_200(
+    client: TestClient, mock_service: AsyncMock
+) -> None:
     supplier_id = uuid.uuid4()
     mock_service.get_by_supplier.return_value = [make_purchase(supplier_id=supplier_id)]
 
@@ -74,9 +79,13 @@ def test_list_by_supplier_returns_200(client: TestClient, mock_service: AsyncMoc
     assert len(response.json()) == 1
 
 
-def test_list_by_ingredient_returns_200(client: TestClient, mock_service: AsyncMock) -> None:
+def test_list_by_ingredient_returns_200(
+    client: TestClient, mock_service: AsyncMock
+) -> None:
     ingredient_id = uuid.uuid4()
-    mock_service.get_by_ingredient.return_value = [make_purchase(ingredient_id=ingredient_id)]
+    mock_service.get_by_ingredient.return_value = [
+        make_purchase(ingredient_id=ingredient_id)
+    ]
 
     response = client.get(f"/api/v1/ingredient-purchases/by-ingredient/{ingredient_id}")
 
@@ -85,14 +94,17 @@ def test_list_by_ingredient_returns_200(client: TestClient, mock_service: AsyncM
 
 # ── POST /ingredient-purchases ────────────────────────────────────────────────
 
-def test_register_purchase_returns_201(client: TestClient, mock_service: AsyncMock) -> None:
+
+def test_register_purchase_returns_201(
+    client: TestClient, mock_service: AsyncMock
+) -> None:
     purchase = make_purchase()
     mock_service.register_purchase.return_value = purchase
 
     response = client.post("/api/v1/ingredient-purchases", json=VALID_PAYLOAD)
 
     assert response.status_code == 201
-    assert response.json()["total_amount"] == "10000.00"
+    assert response.json()["total_amount"] == 10000.0
     mock_service.register_purchase.assert_called_once()
 
 
@@ -100,6 +112,7 @@ def test_register_purchase_supplier_not_found_returns_404(
     client: TestClient, mock_service: AsyncMock
 ) -> None:
     from src.core.exceptions import NotFoundException
+
     mock_service.register_purchase.side_effect = NotFoundException(
         "Proveedor no encontrado o inactivo"
     )
@@ -113,6 +126,7 @@ def test_register_purchase_ingredient_not_found_returns_404(
     client: TestClient, mock_service: AsyncMock
 ) -> None:
     from src.core.exceptions import NotFoundException
+
     mock_service.register_purchase.side_effect = NotFoundException(
         "Ingrediente no encontrado o inactivo"
     )
@@ -160,12 +174,15 @@ def test_register_purchase_updates_stock_and_cost(
     response = client.post("/api/v1/ingredient-purchases", json=payload)
 
     assert response.status_code == 201
-    assert response.json()["total_amount"] == "15000.00"
+    assert response.json()["total_amount"] == 15000.0
 
 
 # ── RBAC ──────────────────────────────────────────────────────────────────────
 
-def test_panadero_cannot_register_purchase(client: TestClient, mock_service: AsyncMock) -> None:
+
+def test_panadero_cannot_register_purchase(
+    client: TestClient, mock_service: AsyncMock
+) -> None:
     from src.core.dependencies import get_current_user
     from src.models.enums import Role
     from src.models.user import User
@@ -184,7 +201,9 @@ def test_panadero_cannot_register_purchase(client: TestClient, mock_service: Asy
     app.dependency_overrides[get_current_user] = lambda: make_admin_user()
 
 
-def test_cajero_cannot_register_purchase(client: TestClient, mock_service: AsyncMock) -> None:
+def test_cajero_cannot_register_purchase(
+    client: TestClient, mock_service: AsyncMock
+) -> None:
     from src.core.dependencies import get_current_user
     from src.models.enums import Role
     from src.models.user import User
