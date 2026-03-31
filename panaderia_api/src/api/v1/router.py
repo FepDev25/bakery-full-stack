@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 
+from src.api.v1.routes.ai import router as ai_router
 from src.api.v1.routes.auth import router as auth_router
 from src.api.v1.routes.category import router as categories_router
 from src.api.v1.routes.customer import router as customers_router
@@ -33,3 +34,4 @@ router.include_router(production_router, prefix="/production-batches", tags=["Pr
 router.include_router(purchases_router, prefix="/ingredient-purchases", tags=["Purchases"], dependencies=_auth)
 router.include_router(recipes_router, prefix="/recipes", tags=["Recipes"], dependencies=_auth)
 router.include_router(expenses_router, prefix="/expenses", tags=["Expenses"], dependencies=_auth)
+router.include_router(ai_router, prefix="/ai", tags=["AI Assistant"], dependencies=_auth)
