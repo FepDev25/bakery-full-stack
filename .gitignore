@@ -27,3 +27,6 @@ panaderia_web/playwright-report/
 panaderia_web/test-results/
 dist-ssr
 *.local
+
+docs/private
+CLAUDE.md
