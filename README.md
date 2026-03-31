@@ -1,6 +1,43 @@
 # Panaderia SaaS
 
-Sistema de gestion para panaderia artesanal con ventas en punto de venta, inventario de ingredientes, lotes de produccion y control financiero. El repositorio es un monorepo con backend y frontend activos.
+Sistema de gestion para panaderia artesanal con ventas en punto de venta, inventario de ingredientes, lotes de produccion y control financiero — con **asistente de analisis impulsado por IA** (Claude).
+
+El repositorio es un monorepo con backend FastAPI, frontend React y base de datos PostgreSQL.
+
+---
+
+## Asistente de Analisis con IA
+
+El modulo de IA permite consultar el negocio en lenguaje natural. El asistente tiene acceso a herramientas que consultan la base de datos en tiempo real: ventas, stock, produccion, gastos, clientes y catalogo.
+
+**Arquitectura:** Claude (Anthropic) recibe la pregunta del usuario, decide que herramientas ejecutar, consulta PostgreSQL a traves del backend FastAPI y devuelve una respuesta formateada con datos reales.
+
+### Ejemplos de consultas
+
+**Top clientes por facturacion**
+
+![Top clientes](docs/screenshots/ai-clientes.png)
+
+**Cierre de mes: ventas, gastos y produccion**
+
+![Cierre de mes](docs/screenshots/ai-cierre-mes.png)
+
+**Desglose de gastos por categoria**
+
+![Gastos por categoria](docs/screenshots/ai-gastos.png)
+
+### Herramientas disponibles para el modelo
+
+| Herramienta | Que hace |
+|---|---|
+| `get_sales_summary` | Totales de ventas por rango de fechas |
+| `get_top_products` | Productos mas vendidos por cantidad o revenue |
+| `get_stock_status` | Stock actual de productos, con alertas de minimo |
+| `get_production_stats` | Lotes, unidades producidas, tasa de merma |
+| `get_expense_summary` | Gastos operativos por categoria y periodo |
+| `get_ingredient_cost_trend` | Evolucion de precio de compra de un ingrediente |
+| `get_customer_stats` | Top clientes, puntos de fidelidad, frecuencia |
+| `search_catalog` | Busqueda de nombres exactos en productos e ingredientes |
 
 ---
 
@@ -12,10 +49,12 @@ flowchart LR
     Web[panaderia_web\nReact + Vite + TypeScript]
     API[panaderia_api\nFastAPI + SQLAlchemy async]
     DB[(PostgreSQL 16)]
+    Claude[Claude API\nAnthropic]
 
     User --> Web
     Web -->|HTTP JSON + JWT| API
     API --> DB
+    API -->|Agentic loop\nherramientas| Claude
 ```
 
 ### Frontend (panaderia_web)
@@ -27,6 +66,7 @@ flowchart LR
 - HTTP: Axios con interceptor de refresh token y cola de requests en 401.
 - UI: Tailwind + componentes UI locales (`src/components/ui`) + componentes de dominio (`src/components/shared`).
 - Notificaciones: Sonner.
+- Markdown: react-markdown + remark-gfm (respuestas del asistente con tablas y formato).
 
 ### Backend (panaderia_api)
 
@@ -35,6 +75,7 @@ flowchart LR
 - Arquitectura por capas: rutas -> servicios -> repositorios.
 - Autenticacion JWT con access/refresh.
 - Reglas de negocio de ventas, produccion, compras, clientes y gastos implementadas en capa de servicios.
+- Modulo AI: agentic loop con ventana de conversacion (5 turnos, TTL 30 min), tool executor sobre SQLAlchemy async.
 
 ---
 
@@ -73,6 +114,7 @@ flowchart TD
 - Inventario: stock, proveedores, compras de ingredientes.
 - Finanzas: dashboard, gastos, reporte de ventas.
 - Admin: overview, usuarios, cambio de contrasena.
+- **Asistente AI: chat en lenguaje natural con acceso a datos reales del negocio.**
 
 ---
 
@@ -108,6 +150,11 @@ flowchart LR
     subgraph Finanzas
         Expense --> User
     end
+
+    subgraph AI
+        ChatService --> ToolExecutor
+        ToolExecutor --> DB[(PostgreSQL)]
+    end
 ```
 
 ### Endpoints base (v1)
@@ -124,6 +171,7 @@ flowchart LR
 - `/api/v1/ingredient-purchases`
 - `/api/v1/suppliers`
 - `/api/v1/expenses`
+- `/api/v1/ai` — chat con el asistente de analisis
 
 ---
 
@@ -154,6 +202,7 @@ git clone <repo-url>
 cd panaderia
 
 cp .env.example .env
+# Agregar ANTHROPIC_API_KEY en .env para el modulo AI
 docker compose up -d --build
 ```
 
@@ -189,6 +238,11 @@ Variables usadas por frontend:
 - `VITE_LOYALTY_POINTS_RATIO`
 - `VITE_APP_NAME` (opcional, con fallback)
 
+Variables de backend relevantes para AI:
+
+- `ANTHROPIC_API_KEY` — requerida para el asistente
+- `AI_MODEL` — modelo a usar (default: `claude-haiku-4-5-20251001`)
+
 ---
 
 ## Estructura del repositorio
@@ -197,6 +251,7 @@ Variables usadas por frontend:
 panaderia/
 ├── panaderia_api/
 │   ├── src/
+│   │   ├── ai/                  <- modulo AI (client, tools, tool_executor, chat_service)
 │   │   ├── api/v1/routes/
 │   │   ├── core/
 │   │   ├── middleware/
@@ -210,6 +265,7 @@ panaderia/
 │   │   ├── api/
 │   │   ├── components/
 │   │   ├── features/
+│   │   │   └── ai/              <- AiAssistantPage, ChatWindow, MessageBubble, ChatInput, useAiChat
 │   │   ├── hooks/
 │   │   ├── lib/
 │   │   └── test/
@@ -221,5 +277,8 @@ panaderia/
 │       ├── 00_init.sql
 │       ├── 01_schema.sql
 │       └── seeds.sql
+├── docs/
+│   ├── screenshots/
+│   └── openapi.yaml
 └── docker-compose.yml
 ```
