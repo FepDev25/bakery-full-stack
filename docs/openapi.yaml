@@ -1510,7 +1510,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/IngredientPurchaseResponse'
-                title: Response List By Supplier Api V1 Ingredient Purchases By Supplier  Supplier Id  Get
+                title: Response List By Supplier Api V1 Ingredient Purchases By Supplier  Supplier
+                  Id  Get
         '422':
           description: Validation Error
           content:
@@ -1556,7 +1557,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/IngredientPurchaseResponse'
-                title: Response List By Ingredient Api V1 Ingredient Purchases By Ingredient  Ingredient Id  Get
+                title: Response List By Ingredient Api V1 Ingredient Purchases By
+                  Ingredient  Ingredient Id  Get
         '422':
           description: Validation Error
           content:
@@ -1588,7 +1590,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/RecipeResponse'
-                title: Response List Recipes By Product Api V1 Recipes Product  Product Id  Get
+                title: Response List Recipes By Product Api V1 Recipes Product  Product
+                  Id  Get
         '422':
           description: Validation Error
           content:
@@ -1916,6 +1919,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ai/chat:
+    post:
+      tags:
+      - AI Assistant
+      summary: Chat
+      operationId: chat_api_v1_ai_chat_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
   /health:
     get:
       tags:
@@ -1999,6 +2029,39 @@ components:
           title: Is Active
       type: object
       title: CategoryUpdate
+    ChatRequest:
+      properties:
+        message:
+          type: string
+          title: Message
+        conversation_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Conversation Id
+      type: object
+      required:
+      - message
+      title: ChatRequest
+    ChatResponse:
+      properties:
+        reply:
+          type: string
+          title: Reply
+        conversation_id:
+          type: string
+          title: Conversation Id
+        sources:
+          items:
+            $ref: '#/components/schemas/ToolSource'
+          type: array
+          title: Sources
+      type: object
+      required:
+      - reply
+      - conversation_id
+      - sources
+      title: ChatResponse
     CustomerCreate:
       properties:
         name:
@@ -3521,6 +3584,20 @@ components:
       - refresh_token
       - expires_in
       title: TokenResponse
+    ToolSource:
+      properties:
+        tool:
+          type: string
+          title: Tool
+        result:
+          additionalProperties: true
+          type: object
+          title: Result
+      type: object
+      required:
+      - tool
+      - result
+      title: ToolSource
     UserChangePassword:
       properties:
         current_password:
