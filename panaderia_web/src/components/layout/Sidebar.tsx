@@ -1,4 +1,5 @@
 import {
+  BotMessageSquare,
   ChevronLeft,
   ChevronRight,
   LayoutDashboard,
@@ -71,6 +72,12 @@ const NAV_ITEMS: NavItem[] = [
     to: '/app/admin',
     icon: Settings,
     roles: ['admin'],
+  },
+  {
+    label: 'Asistente AI',
+    to: '/app/ai',
+    icon: BotMessageSquare,
+    roles: ['admin', 'cajero', 'panadero', 'contador'],
   },
 ]
 
