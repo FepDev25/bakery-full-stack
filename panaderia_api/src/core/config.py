@@ -28,6 +28,12 @@ class Settings(BaseSettings):
     # negocio
     LOYALTY_POINTS_RATIO: int = 10  # $10 por punto ganado en ventas
 
+    # AI assistant
+    ANTHROPIC_API_KEY: str = ""
+    AI_MODEL: str = "claude-haiku-4-5-20251001"
+    AI_MAX_TURNS: int = 5
+    AI_MAX_TOKENS: int = 1024
+
     @computed_field
     def DATABASE_URL(self) -> str:
         return (
