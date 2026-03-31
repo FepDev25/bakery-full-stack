@@ -17,6 +17,7 @@ const ProductionListPage = lazy(() => import('@/features/production/ProductionLi
 const InventoryPage = lazy(() => import('@/features/inventory/InventoryPage'))
 const FinancePage = lazy(() => import('@/features/finance/FinancePage'))
 const AdminPage = lazy(() => import('@/features/admin/AdminPage'))
+const AiAssistantPage = lazy(() => import('@/features/ai/AiAssistantPage'))
 
 const NotFound = () => (
   <div className="flex h-screen flex-col items-center justify-center gap-2">
@@ -116,6 +117,9 @@ export const router = createBrowserRouter([
             element: <RoleGuard allowed={['admin']} />,
             children: [{ path: 'admin/*', element: withSuspense(AdminPage) }],
           },
+
+          // Asistente AI — todos los roles
+          { path: 'ai', element: withSuspense(AiAssistantPage) },
         ],
       },
     ],
