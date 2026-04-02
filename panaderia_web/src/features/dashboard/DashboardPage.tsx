@@ -65,7 +65,10 @@ function MetricCard({
 
 // Dashboard
 
-const todayStr = new Date().toISOString().slice(0, 10)
+function localToday(): string {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
 
 export default function DashboardPage() {
   const { user } = useAuthStore()
@@ -74,6 +77,8 @@ export default function DashboardPage() {
   const canSeeSales = role === 'cajero' || role === 'admin'
   const canSeeProduction = role === 'panadero' || role === 'admin'
   const canSeeInventory = role === 'panadero' || role === 'contador' || role === 'admin'
+
+  const todayStr = localToday()
 
   const [salesQuery, batchesQuery, ingredientsQuery] = useQueries({
     queries: [
