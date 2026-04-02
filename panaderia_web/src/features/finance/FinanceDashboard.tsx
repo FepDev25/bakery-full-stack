@@ -32,7 +32,7 @@ function today(): string {
 
 /** ISO week number (Mon–Sun) */
 function isoWeek(dateStr: string): number {
-  const d = new Date(dateStr + 'T00:00:00')
+  const d = new Date(dateStr.slice(0, 10) + 'T00:00:00')
   const jan4 = new Date(d.getFullYear(), 0, 4)
   const startOfWeek1 = new Date(jan4)
   startOfWeek1.setDate(jan4.getDate() - ((jan4.getDay() + 6) % 7))
