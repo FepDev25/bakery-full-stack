@@ -1,8 +1,12 @@
 # Panaderia SaaS
 
+**Demo:** https://bakery-pink-delta.vercel.app &nbsp;·&nbsp; usuario: `admin@panaderia.com` &nbsp;·&nbsp; contraseña: `admin123`
+
 Sistema de gestion para panaderia artesanal con ventas en punto de venta, inventario de ingredientes, lotes de produccion y control financiero — con **asistente de analisis impulsado por IA** (Claude).
 
 El repositorio es un monorepo con backend FastAPI, frontend React y base de datos PostgreSQL.
+
+**Autor:** Felipe Peralta — Cuenca, Ecuador
 
 ---
 
@@ -190,6 +194,22 @@ flowchart LR
 - Unit, API mocked e integracion con pytest.
 - Estado actual validado localmente:
   - `uv run pytest` -> 173 tests OK.
+
+---
+
+## Deploy en Produccion
+
+La aplicacion esta desplegada en:
+
+| Servicio | Plataforma | URL |
+|---|---|---|
+| Frontend | Vercel | https://bakery-pink-delta.vercel.app |
+| Backend API | Heroku (container stack) | `panaderia-api.herokuapp.com` |
+| Base de datos | Heroku Postgres essential-0 | PostgreSQL 16 |
+
+El deploy usa Docker en Heroku (container stack), Vercel con rewrite SPA y rate limiting sobre el endpoint AI para proteger el consumo de la API de Anthropic.
+
+Para la documentacion completa del proceso — variables de entorno, problemas enfrentados, decisiones tecnicas y practicas aplicadas — ver [`docs/private/DEPLOY_MANUAL.md`](docs/DEPLOY_MANUAL.md).
 
 ---
 
