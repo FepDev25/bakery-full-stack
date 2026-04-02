@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 from decimal import Decimal
 from uuid import UUID
 
@@ -26,7 +26,7 @@ class SaleRepository(BaseRepository[Sale]):
         if from_date:
             query = query.where(Sale.sale_date >= from_date)
         if to_date:
-            query = query.where(Sale.sale_date <= to_date)
+            query = query.where(Sale.sale_date < to_date + timedelta(days=1))
         result = await self.session.execute(
             query.order_by(Sale.sale_date.desc()).offset(skip).limit(limit)
         )
@@ -41,7 +41,7 @@ class SaleRepository(BaseRepository[Sale]):
         if from_date:
             query = query.where(Sale.sale_date >= from_date)
         if to_date:
-            query = query.where(Sale.sale_date <= to_date)
+            query = query.where(Sale.sale_date < to_date + timedelta(days=1))
         result = await self.session.execute(query)
         return result.scalar_one()
 
@@ -56,7 +56,7 @@ class SaleRepository(BaseRepository[Sale]):
     ) -> list[Sale]:
         result = await self.session.execute(
             select(Sale)
-            .where(Sale.sale_date >= from_date, Sale.sale_date <= to_date)
+            .where(Sale.sale_date >= from_date, Sale.sale_date < to_date + timedelta(days=1))
             .order_by(Sale.sale_date.desc())
             .offset(skip)
             .limit(limit)
