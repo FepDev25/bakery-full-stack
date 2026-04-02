@@ -39,6 +39,20 @@ def _load_env() -> dict:
 
 
 def get_connection():
+    # DATABASE_URL directo (Heroku, producción)
+    db_url = os.environ.get("DATABASE_URL")
+    if db_url:
+        from urllib.parse import urlparse
+        u = urlparse(db_url)
+        return psycopg2.connect(
+            host=u.hostname,
+            port=u.port or 5432,
+            user=u.username,
+            password=u.password,
+            dbname=u.path.lstrip("/"),
+            sslmode="require",
+        )
+    # Fallback: leer .env local
     env = _load_env()
     return psycopg2.connect(
         host=env.get("POSTGRES_SERVER", "localhost"),
